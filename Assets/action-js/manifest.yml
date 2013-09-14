@@ -1,0 +1,12 @@
+---
+collections:
+  - files: [ images ]
+  - css:
+    - action.css
+#    - coffeescript: 1
+#      files:
+#        - action2.coffee
+  - js:
+    - action.js
+    - action-growl.js
+    - action-msgbox.js

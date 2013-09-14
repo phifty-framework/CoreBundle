@@ -1,0 +1,85 @@
+{#
+vim:filetype=htmldjango:
+#}
+
+{% macro js(path) %}
+    <script type="text/javascript" charset="utf-8" src="{{path}}"> </script>
+{% endmacro %}
+
+{% macro css(path,media) %}
+    <link rel="stylesheet" href="{{path}}" type="text/css" media="{{ media |default('screen') }}" charset="utf-8" />
+{% endmacro %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    {% set appname = Kernel.config.get('framework.ApplicationName') %}
+
+    {% block head %}
+    <title>{% block title %} {{ title|default(appname) }} {% endblock %}</title>
+
+    <meta charset="UTF-8" /> 
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="content" content="Content-Type: text/html; Charset: UTF-8; " />
+
+    {{ Web.include_assets({assets: ['jquery-1.8','jquery-ui-1.9','action-js','region-js']}) |raw}}
+
+    {% endblock %}
+</head>
+<body>
+
+{% block operation %}
+    <div id="operation">  
+        <img class="logo" src="/assets/phifty-core/images/lart-logo.jpg"/>
+
+        <div class="logo-text"> 
+            {% block logo_text %}
+                {{ appname }}
+            {% endblock %}
+        </div>
+
+
+        {% block operation_buttons %}
+
+
+        <div class="buttons">
+
+            <form style=" display: inline; margin:0; padding:0; " name="lang_select" method="post">
+                <input type="hidden" name="action" value="I18N::Action::ChooseLang"/>
+                {% set currentLang = Kernel.locale.current %}
+                {% set langList = Kernel.locale.getLangList %}
+                <select name="lang" onchange=" this.form.submit();" style="margin:0;">
+                    {% for langId,label in langList %}
+                        <option value="{{ langId }}" {% if langId == currentLang %} selected {% endif %}>{{ label }} </option>
+                    {% endfor %}
+                </select>
+            </form>
+
+            {% if Kernel.currentUser().isLogged() %}
+                <a href="/logout">{% trans 'Logout' %}</a>
+            {% else %}
+                <a href="/login">{% trans 'Login' %}</a>
+            {% endif %}
+
+            {# <a href="" onclick=" $('#search-form').slideDown(); return false;" >{% trans 'Search' %}</a> #}
+        </div>
+        {% endblock %}
+
+    </div>
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %} 
+{% endblock %}
+
+{% block footer %}
+<div style="padding-bottom:40px;">  </div>
+<div style=" position: absolute; bottom: 0px; left: 0px; width: 100%; "> 
+</div>
+{% endblock %}
+
+    </body>
+</html>

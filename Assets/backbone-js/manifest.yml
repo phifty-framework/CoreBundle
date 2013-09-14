@@ -1,0 +1,6 @@
+---
+#  resource:
+#    url: http://backbonejs.org/backbone.js
+collections:
+  - js:
+    - backbone.js

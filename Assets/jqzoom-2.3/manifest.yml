@@ -1,0 +1,8 @@
+---
+collections:
+  - js:
+    - js/jquery.jqzoom-core.js
+  - files:
+    - images
+  - css:
+    - css/jquery.jqzoom.css

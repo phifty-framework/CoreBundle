@@ -1,0 +1,4 @@
+---
+collections:
+  - js:
+    - jquery.scrollTo-min.js

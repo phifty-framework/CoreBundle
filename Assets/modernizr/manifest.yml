@@ -1,0 +1,6 @@
+---
+resource:
+  url: http://modernizr.com/downloads/modernizr-latest.js
+collections:
+  - js:
+    - modernizr-latest.js

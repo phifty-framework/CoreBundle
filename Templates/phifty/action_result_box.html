@@ -1,0 +1,31 @@
+{# render action result #}
+<div class="message {{ result.type }}">
+    <span style="float: left; " class="ui-icon ui-icon-notice"> </span>
+    <div class="text"> {{ result.message }} </div>
+    <div class="desc">
+        {% for k,v in result.validations %}
+            {% if not v.valid %}
+                <div class="error-message">{{ v.message }}</div>
+            {% endif %}
+        {% endfor %}
+
+        {% if result.desc %}
+            <div class="desc">{{ result.desc }}</div>
+        {% endif %}
+    </div>
+
+    <!-- close button -->
+    <span onclick="$(this).parent().fadeOut();" style="position: absolute; top: 6px; right: 6px;" class="ui-icon ui-icon-circle-close"> </span>
+
+    <script>
+    if( typeof jQuery != 'undefined' ) {
+        jQuery(document.body).ready(function() {
+            if( '{{result.type}}' == 'success' ) {
+                $.jGrowl('{{ result.message }}');
+            } else {
+                $.jGrowl('{{ result.message }}',{ theme: 'error' });
+            }
+        });
+    }
+    </script>
+</div>

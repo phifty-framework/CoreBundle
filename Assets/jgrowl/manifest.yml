@@ -1,0 +1,6 @@
+---
+collections:
+  - css:
+    - jGrowl/jquery.jgrowl.css
+  - js:
+    - jGrowl/jquery.jgrowl.js

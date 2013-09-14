@@ -1,0 +1,14 @@
+---
+collections:
+  - files:
+    - images/
+    - css/
+    - js/
+  - js:
+    - js/tinymce/tiny_mce.js
+    - js/tinymce_helper.js
+  - css:
+    - css/common.css
+    - css/gstyle.css
+    - css/phifty.css
+    - css/lart.css

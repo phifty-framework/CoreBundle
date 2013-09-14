@@ -1,0 +1,25 @@
+{#
+vim:filetype=htmldjango:
+#}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    {% set appname = Kernel.config.framework.ApplicationName %}
+    {% block head %}
+
+    <title>{% block title %} {{ title|default(appname) }} {% endblock %}</title>
+    <meta name="keywords" content="{{ keywords }}"/>
+    <meta name="description" content="{{ description }}"/>
+    <meta name="content" content="Content-Type: text/html; charset: {{ charset |default('UTF-8') }}; " />
+    <meta charset="{{ charset|default('UTF-8') }}"/> 
+
+    {% endblock %}
+</head>
+<body>
+
+{% block content %} 
+
+{% endblock %}
+
+</body>
+</html>

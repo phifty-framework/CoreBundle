@@ -1,0 +1,4 @@
+---
+collections:
+  - js:
+    - JSON-js/json2.js

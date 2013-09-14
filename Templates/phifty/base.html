@@ -1,0 +1,35 @@
+{#
+vim:filetype=htmldjango:
+#}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    {% set appname = Kernel.config.get('framework','ApplicationName') %}
+
+    {% block head %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="content" content="Content-Type: text/html; Charset: UTF-8; " />
+    <meta name="keywords" content="{{ Page.Keywords }}" />
+    <meta name="description" content="{{ Page.Description }}"/>
+
+    <title>{% block title %}{{ title|default(appname) }}{% endblock %}</title>
+
+    {{ Web.include_loaded_assets('adminui') |raw}}
+    {% endblock %}
+
+    <script>
+    if(typeof jQuery !== 'undefined') {
+        if( typeof FormKit !== 'undefined' ) {
+            jQuery(function() { FormKit.install(); });
+        }
+    }
+    </script>
+</head>
+<body>
+{% block body %}
+
+{% endblock %}
+</body>
+</html>
