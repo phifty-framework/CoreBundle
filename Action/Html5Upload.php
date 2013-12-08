@@ -68,7 +68,7 @@ class Html5Upload extends Action
     public function run()
     {
         $handler = new Html5UploadHandler('upload');
-        $handler->setUploadDir( 'static/upload' );
+        $handler->setUploadDir( 'upload' );
         if( $this->hasFiles() )  {
             if( $this->getFileSize() > 1024 * 1024 * 10 )
                 return $this->error('超過 10MB 大小限制。');
