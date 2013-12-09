@@ -194,11 +194,11 @@ class Action
     _processLocationOptions: (options,resp) ->
         # reload page
         if options.reload
-            setTimeout( (-> window.location.reload()) , options.delay || 0)
+            setTimeout (-> window.location.reload()) , options.delay || 0
         else if options.redirect
-            setTimeout( (-> window.location = options.redirect), options.delay || 0 )
+            setTimeout (-> window.location = options.redirect), options.delay || 0
         else if resp.redirect
-            setTimeout( (-> window.location = resp.redirect), options.delay || 0 )
+            setTimeout (-> window.location = resp.redirect), resp.delay * 1000 || options.delay || 0
 
     _processRegionOptions: (options,resp) ->
         throw "Region is undefined." unless Region
