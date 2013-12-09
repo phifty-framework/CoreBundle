@@ -190,11 +190,13 @@ USAGE
         if (isIndexed(name)) {
           data[name] || (data[name] = []);
         }
-        if (el.attr('type') === "checkbox" && el.is(':checked')) {
-          if (isIndexed(name)) {
-            return data[name].push(val);
-          } else {
-            return data[name] = val;
+        if (el.attr('type') === "checkbox") {
+          if (el.is(':checked')) {
+            if (isIndexed(name)) {
+              return data[name].push(val);
+            } else {
+              return data[name] = val;
+            }
           }
         } else if (el.attr('type') === "radio") {
           if (el.is(':checked')) {
@@ -255,7 +257,9 @@ USAGE
           return window.location = options.redirect;
         }), options.delay || 0);
       } else if (resp.redirect) {
-        return console.log("redirect to", resp.redirect, resp.delay);
+        return setTimeout((function() {
+          return window.location = resp.redirect;
+        }), resp.delay * 1000 || options.delay || 0);
       }
     };
 

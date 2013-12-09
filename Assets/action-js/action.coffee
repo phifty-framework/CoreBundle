@@ -149,11 +149,12 @@ class Action
                 data[name] ||= []
 
                 # for checkbox(s), get their values.
-            if el.attr('type') == "checkbox" and el.is(':checked')
-                if isIndexed( name )
-                    data[name].push( val )
-                else
-                    data[name] = val
+            if el.attr('type') == "checkbox"
+                if el.is(':checked')
+                    if isIndexed( name )
+                        data[name].push( val )
+                    else
+                        data[name] = val
             else if el.attr('type') == "radio"
                 if el.is(':checked')
                     if isIndexed( name )
