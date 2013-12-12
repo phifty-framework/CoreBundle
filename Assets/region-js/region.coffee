@@ -1,4 +1,7 @@
 ###
+
+vim:sw=2:ts=2:sts=2:et:
+
     jQuery Region
     Copyright (C) 2010 Yo-An Lin <cornelius.howl@gmail.com>
 
@@ -198,30 +201,35 @@ class RegionNode
         ),2000
 
 
-      # should we use animate.css? add some detection ?
-      that.el.fadeOut 'fast', () ->
-        # TODO: here the animation stuff should be a event handler or a callback.
+      if that.opts.noEffect
+        that.el.hide().html(html).show()
+      else
+        # should we use animate.css? add some detection ?
+        that.el.fadeOut 'fast', () ->
+          # TODO: here the animation stuff should be a event handler or a callback.
 
-        region = $(this)
-        effectClass = region.data('effectClass')
+          region = $(this)
 
-        # hide the region container, then append the content, which improve the rendering performance.
-        $(this).hide().html(html)
+          # hide the region container, then append the content, which improve the rendering performance.
+          $(this).hide().html(html)
+          return if that.opts.noEffect
 
-        # if the effect class is defined, we should use the effect class name
-        if effectClass
-          # remove the animated class name, so that we can repeat the animation
-          $(this).removeClass('animated flipInY')
-          setTimeout (->
-            that.el.addClass('animated flipInY').show()
-          ), 10
-        else
-          $(this).fadeIn('fast')
+          effectClass = region.data('effectClass')
 
-        if that.opts.historyBtn or Region.opts.historyBtn
-          if that.hasHistory()
-            backbtn = $('<div/>').addClass('region-backbtn').click(-> that.back() )
-            that.el.append( backbtn )
+          # if the effect class is defined, we should use the effect class name
+          if effectClass
+            # remove the animated class name, so that we can repeat the animation
+            $(this).removeClass('animated flipInY')
+            setTimeout (->
+              that.el.addClass('animated flipInY').show()
+            ), 10
+          else
+            $(this).fadeIn('fast')
+
+          if that.opts.historyBtn or Region.opts.historyBtn
+            if that.hasHistory()
+              backbtn = $('<div/>').addClass('region-backbtn').click(-> that.back() )
+              that.el.append( backbtn )
       callback(html) if callback
 
     if Region.opts.gateway
