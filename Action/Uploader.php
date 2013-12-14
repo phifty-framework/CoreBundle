@@ -69,7 +69,7 @@ class Uploader
             return urldecode($_SERVER['HTTP_X_UPLOAD_FILENAME']);
         }
         if ( isset( $this->headers[ 'X-UPLOAD-FILENAME' ] ) ) {
-            return rawurldecode($this->headers[ 'X-UPLOAD-FILENAME' ]);
+            return urldecode($this->headers[ 'X-UPLOAD-FILENAME' ]);
         }
         if ( isset( $_FILES[$this->field]['name'] ) ) {
             return $_FILES[$this->field]['name'];
@@ -159,6 +159,11 @@ class Uploader
             }
             if ( ! $newFileName ) {
                 $newFileName = $this->getFileName();
+            }
+            if ( ! $newFileName ) {
+                // print_r($_FILES);
+                // print_r($_POST);
+                throw new Exception("filename is not defined in request, please check your HTTP header.");
             }
             $path = $this->uploadDir . DIRECTORY_SEPARATOR . $newFileName;
             $path = FileUtils::filename_increase($path);
