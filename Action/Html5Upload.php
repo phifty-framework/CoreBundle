@@ -34,10 +34,12 @@ class Html5Upload extends Action
 
     public function getFileName()
     {
-        if( isset($_SERVER['HTTP_X_UPLOAD_FILENAME']) )
+        if ( isset($_SERVER['HTTP_X_UPLOAD_FILENAME']) ) {
             return $_SERVER['HTTP_X_UPLOAD_FILENAME'];
-        if( isset( $this->headers[ 'X-UPLOAD-FILENAME' ] ) )
+        }
+        if ( isset( $this->headers[ 'X-UPLOAD-FILENAME' ] ) ) {
             return $this->headers[ 'X-UPLOAD-FILENAME' ];
+        }
     }
 
     public function getFileType()
