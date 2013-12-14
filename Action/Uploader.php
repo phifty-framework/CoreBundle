@@ -25,10 +25,10 @@ use Phifty\FileUtils;
 
 class Uploader
 {
-    public $content;
     public $headers;
     public $uploadDir;
     public $field;
+    public $content;
 
     public function __construct($field = false)
     {
@@ -49,10 +49,12 @@ class Uploader
 
     public function foundUpload()
     {
-        if( count($_FILES) > 0 )
+        if ( count($_FILES) > 0 ) {
             return true;
-        if( $this->content )
+        }
+        if ( $this->content ) {
             return true;
+        }
         return false;
     }
 
@@ -98,11 +100,6 @@ class Uploader
         if ( isset( $_FILES[$this->field]['size'] ) ) {
             return $_FILES[$this->field]['size'];
         }
-    }
-
-    public function getContent()
-    {
-        return $this->content;
     }
 
     public function getHeaders()
@@ -157,17 +154,15 @@ class Uploader
             }
             return $path;
         } else {
-            $content = $this->getContent();
-            if ( ! $content ) {
+            if ( ! $this->content ) {
                 throw new Exception('No file content to upload');
             }
-
             if ( ! $newFileName ) {
                 $newFileName = $this->getFileName();
             }
             $path = $this->uploadDir . DIRECTORY_SEPARATOR . $newFileName;
             $path = FileUtils::filename_increase($path);
-            if ( file_put_contents( $path , $content ) === false ) {
+            if ( file_put_contents( $path , $this->content ) === false ) {
                 return false;
             }
             return $path;
