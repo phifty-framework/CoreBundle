@@ -15,7 +15,9 @@ class Html5Upload extends Action
 
         // for apache getallheaders
         if( function_exists("getallheaders") ) {
-            $this->headers = @getallheaders();
+            if ( $headers = getallheaders() ) {
+                $this->headers = $headers;
+            }
         }
 
         if( $this->headers ) {
