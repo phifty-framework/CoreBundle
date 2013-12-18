@@ -36,14 +36,14 @@
         $box = $('<div/>').addClass('message');
         $text = $('<div/>').addClass('text');
         $desc = $('<div/>').addClass('desc');
-        $icon = $('<span/>').css({
+        $icon = $('<i/>').css({
           float: 'left'
-        }).addClass('ui-icon');
+        }).addClass('icon');
         $close = $('<span/>').css({
           position: 'absolute',
           top: 6,
           right: 6
-        }).addClass('ui-icon ui-icon-circle-close').click(function() {
+        }).addClass('icon-remove').click(function() {
           return $box.fadeOut('slow', function() {
             return $box.remove();
           });
@@ -51,13 +51,13 @@
         $box.append($icon).append($text).append($desc).append($close);
         if (resp.success) {
           $box.addClass('success');
-          $icon.addClass('ui-icon-check');
+          $icon.addClass('icon-ok-sign');
           $text.text(resp.message);
           self.container.html($box).fadeIn('fast');
         } else if (resp.error) {
           self.container.empty();
           $box.addClass('error');
-          $icon.addClass('ui-icon-notice');
+          $icon.addClass('icon-warning-sign');
           $text.text(resp.message);
           self.container.html($box).fadeIn('fast');
         }

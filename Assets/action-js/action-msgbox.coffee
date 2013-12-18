@@ -39,24 +39,24 @@ class ActionMsgbox extends ActionPlugin
             $text = $('<div/>').addClass 'text'
             $desc = $('<div/>').addClass 'desc'
             # <span style="float: left; " class="ui-icon ui-icon-notice"> </span>
-            $icon = $('<span/>').css( float: 'left' ).addClass('ui-icon')
+            $icon = $('<i/>').css( float: 'left' ).addClass('icon')
 
             # <span onclick="$(this).parent().fadeOut();" style="position: absolute; top: 6px; right: 6px;" class="ui-icon ui-icon-circle-close"> </span>
             $close = $('<span/>').css( position: 'absolute', top: 6, right: 6 )
-                        .addClass('ui-icon ui-icon-circle-close')
+                        .addClass('icon-remove')
                         .click( -> $box.fadeOut('slow', -> $box.remove() ) )
 
             $box.append($icon).append($text).append($desc).append($close)
 
             if resp.success
                 $box.addClass 'success'
-                $icon.addClass 'ui-icon-check'
+                $icon.addClass 'icon-ok-sign'
                 $text.text(resp.message)
                 self.container.html($box).fadeIn('fast')
             else if resp.error
                 self.container.empty()
                 $box.addClass 'error'
-                $icon.addClass 'ui-icon-notice'
+                $icon.addClass 'icon-warning-sign'
                 $text.text(resp.message)
                 self.container.html($box).fadeIn('fast')
 
@@ -64,7 +64,6 @@ class ActionMsgbox extends ActionPlugin
                 for msg in self.extErrorMsgs(resp)
                     d = $('<div/>').addClass('error-message').html(msg)
                     $desc.append(d)
-
         $(action).bind 'action.before_submit', () -> self.wait()
 
     wait: ->
