@@ -71,7 +71,7 @@ class ActionMsgbox extends ActionPlugin
         $text = $('<div/>').addClass 'text'
         $desc = $('<div/>').addClass 'desc'
         # <span style="float: left; " class="ui-icon ui-icon-notice"> </span>
-        $icon = $('<span/>').css( float: 'left' ).addClass('ui-icon ui-icon-disk')
+        $icon = $('<i/>').css( float: 'left' ).addClass('icon icon-spinner icon-spin')
 
         # <span onclick="$(this).parent().fadeOut();" style="position: absolute; top: 6px; right: 6px;" class="ui-icon ui-icon-circle-close"> </span>
         $close = $('<span/>').css( position: 'absolute', top: 6, right: 6 )

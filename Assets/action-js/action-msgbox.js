@@ -83,9 +83,9 @@
       $box = $('<div/>').addClass('message');
       $text = $('<div/>').addClass('text');
       $desc = $('<div/>').addClass('desc');
-      $icon = $('<span/>').css({
+      $icon = $('<i/>').css({
         float: 'left'
-      }).addClass('ui-icon ui-icon-disk');
+      }).addClass('icon icon-spinner icon-spin');
       $close = $('<span/>').css({
         position: 'absolute',
         top: 6,
