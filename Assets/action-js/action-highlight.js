@@ -33,8 +33,9 @@
           $field.wrap("<div class=\"action-field field-" + name + "\"/>");
         }
         if (!m.length) {
-          return $field.after("<div class=\"action-field-message field-" + name + "-message\"/>");
+          $field.after("<div class=\"action-field-message field-" + name + "-message\"/>");
         }
+        return $(".action-field-message").hide();
       });
       that = this;
       return $(action).bind('action.on_result', function(ev, resp) {

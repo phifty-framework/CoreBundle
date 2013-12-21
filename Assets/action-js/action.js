@@ -239,11 +239,14 @@ USAGE
 
     Action.prototype._processFormOptions = function(options, resp) {
       if (options.clear) {
-        return FormUtils.findTextFields(this.form()).each(function(i, e) {
+        FormUtils.findTextFields(this.form()).each(function(i, e) {
           if ($(this).attr('name') !== "action") {
             return $(this).val("");
           }
         });
+      }
+      if (options.fadeOut) {
+        return this.form().fadeOut('slow');
       }
     };
 
@@ -400,6 +403,9 @@ USAGE
     
             * clear:        [bool]
                             clear text fields
+    
+            * fadeOut:      [hide]
+                            hide the form if success
     */
 
 

@@ -1,4 +1,5 @@
 
+
 class ActionHighlight extends ActionPlugin
   init: (action) ->
     @action = action
@@ -19,7 +20,7 @@ class ActionHighlight extends ActionPlugin
       w = $(".field-#{name}")
       $field.wrap "<div class=\"action-field field-#{name}\"/>" unless w.length
       $field.after "<div class=\"action-field-message field-#{name}-message\"/>"  unless m.length
-
+      $(".action-field-message").hide()
 
     that = this
     $(action).bind 'action.on_result', (ev,resp) ->
