@@ -19,7 +19,7 @@ USAGE
 ###
 
 
-FormUtils =
+window.FormUtils =
     findFields: (form) ->
         return $(form).find 'select, textarea,
              input[type=text],

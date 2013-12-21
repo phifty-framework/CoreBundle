@@ -20,9 +20,9 @@ USAGE
 
 
 (function() {
-  var Action, ActionPlugin, FormUtils;
+  var Action, ActionPlugin;
 
-  FormUtils = {
+  window.FormUtils = {
     findFields: function(form) {
       return $(form).find('select, textarea,\
              input[type=text],\

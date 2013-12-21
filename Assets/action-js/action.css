@@ -57,14 +57,19 @@
         margin-left: 12px; 
     }
 
-.action-field {  }
+.action-field {
+    display: inline-block;
+}
 .action-field.invalid {  }
 .action-field.valid {  }
 
 .action-field-message {
-    padding: 3px;
+    padding: 2px 10px;
     border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
     clear: both;
+    display: inline-block;
 }
 .action-field-message.invalid { 
     color: #333;
