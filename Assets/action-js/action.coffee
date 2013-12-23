@@ -191,7 +191,7 @@ class Action
             # it's not action name field, clear it.
             FormUtils.findTextFields(@form()).each (i,e) ->
                 $(this).val("") if $(this).attr('name') != "action"
-        if options.fadeOut
+        if resp.success and options.fadeOut
             @form().fadeOut('slow')
 
     _processLocationOptions: (options,resp) ->

@@ -245,7 +245,7 @@ USAGE
           }
         });
       }
-      if (options.fadeOut) {
+      if (resp.success && options.fadeOut) {
         return this.form().fadeOut('slow');
       }
     };
