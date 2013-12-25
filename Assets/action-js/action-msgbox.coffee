@@ -20,13 +20,18 @@ class ActionMsgbox extends ActionPlugin
         @cls    = 'action-' + actionId + '-result'
         @ccls   = 'action-result'
         if @config.container
-            @container = $(@config.container).empty().hide()
+            @container = $(@config.container)
         else
             # find result container from current form
             @container = @form.find( '.' + @cls )
             if not @container.get(0)
-                @container = $('<div/>').addClass( @cls ).addClass( @ccls ).empty().hide()
+                @container = $('<div/>').addClass( @cls ).addClass( @ccls )
                 @form.prepend @container
+
+        if typeof @config.clear != "undefined"
+            @container.empty().hide() if @config.clear
+        else
+            @container.empty().hide()
 
         # XXX: use backbone-js template to render action result.
         $(action).bind 'action.on_result', (ev,resp) ->

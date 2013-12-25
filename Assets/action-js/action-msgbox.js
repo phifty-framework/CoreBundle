@@ -23,13 +23,20 @@
       this.cls = 'action-' + actionId + '-result';
       this.ccls = 'action-result';
       if (this.config.container) {
-        this.container = $(this.config.container).empty().hide();
+        this.container = $(this.config.container);
       } else {
         this.container = this.form.find('.' + this.cls);
         if (!this.container.get(0)) {
-          this.container = $('<div/>').addClass(this.cls).addClass(this.ccls).empty().hide();
+          this.container = $('<div/>').addClass(this.cls).addClass(this.ccls);
           this.form.prepend(this.container);
         }
+      }
+      if (typeof this.config.clear !== "undefined") {
+        if (this.config.clear) {
+          this.container.empty().hide();
+        }
+      } else {
+        this.container.empty().hide();
       }
       $(action).bind('action.on_result', function(ev, resp) {
         var $box, $close, $desc, $icon, $text, d, msg, _i, _len, _ref1, _results;
