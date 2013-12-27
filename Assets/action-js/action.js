@@ -410,7 +410,7 @@ USAGE
 
 
     Action.prototype.run = function(actionName, args, arg1, arg2) {
-      var cb, data, e, errorHandler, formEl, sendto, successHandler;
+      var cb, data, e, errorHandler, formEl, postUrl, successHandler;
       try {
         if (typeof arg1 === "function") {
           cb = arg1;
@@ -439,12 +439,17 @@ USAGE
             FormUtils.disableInputs(formEl);
           }
         }
-        sendto = this.actionPath ? this.actionPath : window.location.pathname;
+        postUrl = window.location.pathname;
+        if (formEl.attr('action')) {
+          postUrl = formEl.attr('action');
+        } else if (this.actionPath) {
+          postUrl = this.actionPath;
+        }
         errorHandler = this._createErrorHandler(formEl, this.options);
         successHandler = this._createSuccessHandler(formEl, this.options, cb);
-        this.log('Sending ajax request: ', sendto, data);
+        this.log('Sending Ajax Request: ', postUrl, data);
         jQuery.ajax($.extend(this.ajaxOptions, {
-          url: sendto,
+          url: postUrl,
           data: data,
           error: errorHandler,
           success: successHandler

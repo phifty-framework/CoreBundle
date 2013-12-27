@@ -340,15 +340,20 @@ class Action
                 # if we have form, disable these inputs
                 FormUtils.disableInputs(formEl) if @options.disableInput
 
-            sendto = if @actionPath then @actionPath else window.location.pathname
+            postUrl = window.location.pathname
+
+            if formEl.attr('action')
+                postUrl = formEl.attr('action')
+            else if @actionPath
+                postUrl = @actionPath
 
             errorHandler = @_createErrorHandler( formEl, @options )
             successHandler = @_createSuccessHandler( formEl, @options, cb )
 
-            @log( 'Sending ajax request: ', sendto , data )
+            @log( 'Sending Ajax Request: ', postUrl , data )
 
             jQuery.ajax $.extend @ajaxOptions,
-                url: sendto
+                url: postUrl
                 data: data
                 error: errorHandler
                 success: successHandler
