@@ -440,7 +440,7 @@ USAGE
           }
         }
         postUrl = window.location.pathname;
-        if (formEl.attr('action')) {
+        if (formEl && formEl.attr('action')) {
           postUrl = formEl.attr('action');
         } else if (this.actionPath) {
           postUrl = this.actionPath;

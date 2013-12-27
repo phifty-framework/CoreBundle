@@ -342,7 +342,7 @@ class Action
 
             postUrl = window.location.pathname
 
-            if formEl.attr('action')
+            if formEl and formEl.attr('action')
                 postUrl = formEl.attr('action')
             else if @actionPath
                 postUrl = @actionPath
