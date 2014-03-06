@@ -87,10 +87,15 @@ tinyMCE_Helper.init = function( name , args ) {
 
 function use_tinymce(name,args) {
     $(document.body).ready(function() {
+        tinyMCE.EditorManager.triggerSave();
         $(tinyMCE.editors).each(function(){
-            tinyMCE.remove(this);
+            console.log(this);
+            this.remove();
+            this.destroy();
         });
-        tinyMCE_Helper.init( name , args );
+        var schema = tinyMCE_Helper.get_schema( name || "default" , args );
+        tinyMCE.baseURL = '/assets/phifty-core/js/tinymce/';
+        tinyMCE.init( schema );
     });
 }
 
