@@ -23,6 +23,7 @@ class CoreBundle extends Bundle
             'action-js',
             'region-js',
             'phifty-core',
+            'ace',
         );
     }
 

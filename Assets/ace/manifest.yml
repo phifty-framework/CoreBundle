@@ -1,0 +1,4 @@
+---
+collections:
+  - js:
+    - src-min/ace.js
