@@ -29,6 +29,7 @@ window.FormUtils =
              input[type=date],
              input[type=datetime],
              input[type=time],
+             input[type=email],
              input[type=hidden]'
 
     findVisibleFields: (form) ->
@@ -39,6 +40,7 @@ window.FormUtils =
                     input[type=time],
                     input[type=checkbox],
                     input[type=radio],
+                    input[type=email],
                     input[type=password]'
 
     findTextFields: (form) ->
@@ -48,6 +50,7 @@ window.FormUtils =
                       input[type="datetime"],
                       input[type="date"],
                       input[type="password"],
+                      input[type="email"],
                       textarea'
 
     enableInputs: (form) -> @findVisibleFields(form).removeAttr('disabled')
