@@ -61,7 +61,7 @@ class Action
     ajaxOptions:
         dataType: 'json'
         type: 'post'
-        timeout: 5000
+        timeout: 8000
     plugins: []
     actionPath: null
     options:
@@ -266,7 +266,7 @@ class Action
             return true
 
     _createErrorHandler: (formEl, options) ->
-      return (error) =>
+      return (error, t, m) =>
         if error.responseText
           if window.console then console.error error.responseText
           else alert error.responseText
