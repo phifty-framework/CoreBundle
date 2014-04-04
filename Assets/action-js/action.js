@@ -32,6 +32,7 @@ USAGE
              input[type=date],\
              input[type=datetime],\
              input[type=time],\
+             input[type=email],\
              input[type=hidden]');
     },
     findVisibleFields: function(form) {
@@ -42,6 +43,7 @@ USAGE
                     input[type=time],\
                     input[type=checkbox],\
                     input[type=radio],\
+                    input[type=email],\
                     input[type=password]');
     },
     findTextFields: function(form) {
@@ -51,6 +53,7 @@ USAGE
                       input[type="datetime"],\
                       input[type="date"],\
                       input[type="password"],\
+                      input[type="email"],\
                       textarea');
     },
     enableInputs: function(form) {
@@ -65,7 +68,7 @@ USAGE
     Action.prototype.ajaxOptions = {
       dataType: 'json',
       type: 'post',
-      timeout: 5000
+      timeout: 8000
     };
 
     Action.prototype.plugins = [];
@@ -346,7 +349,7 @@ USAGE
 
     Action.prototype._createErrorHandler = function(formEl, options) {
       var _this = this;
-      return function(error) {
+      return function(error, t, m) {
         if (error.responseText) {
           if (window.console) {
             console.error(error.responseText);
