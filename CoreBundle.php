@@ -2,8 +2,9 @@
 namespace CoreBundle;
 use Phifty\Bundle;
 use Twig_Function_Function;
+use Phifty\ComposerConfigBridge;
 
-class CoreBundle extends Bundle
+class CoreBundle extends Bundle implements ComposerConfigBridge
 {
     public function assets()
     {
