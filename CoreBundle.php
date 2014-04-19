@@ -41,5 +41,14 @@ class CoreBundle extends Bundle
             $this->route( '/_dev/server', 'InfoController:server' );
         }
     }
+
+
+    public function getComposerDependency() {
+        return [
+            "php"                       => ">=5.3.0",
+            "corneltek/phifty-core"    => "dev-master",
+        ];
+    }
+
 }
 
