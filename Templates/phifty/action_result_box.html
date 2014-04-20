@@ -1,9 +1,9 @@
 {# render action result #}
 <div class="message {{ result.type }}">
     {% if result.type == "success" %}
-    <i style="float: left; " class="icon icon-check-sign"> </i>
+    <i style="float: left; " class="icon fa-check"> </i>
     {% else %}
-    <i style="float: left; " class="icon icon-remove-sign"> </i>
+    <i style="float: left; " class="icon fa-times"> </i>
     {% endif %}
     <div class="text"> {{ result.message }} </div>
     <div class="desc">
