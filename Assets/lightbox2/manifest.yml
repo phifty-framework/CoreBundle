@@ -1,0 +1,6 @@
+---
+collections:
+  - js:
+    - js/lightbox.min.js
+  - css:
+    - css/lightbox.css
