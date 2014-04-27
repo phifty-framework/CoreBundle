@@ -15,8 +15,11 @@ class Html5Upload extends Action
                 return $this->error('超過 10MB 大小限制。');
             }
             */
-            if ( $ret = $handler->move() ) {
-                return $this->success( 'File uploaded', array( 'file' => $ret ) );
+            if ( $path = $handler->move() ) {
+                return $this->success( 'File uploaded', array(
+                    'file' => $path,
+                    'basename' => basename($path),
+                ));
             }
             return $this->error( 'Upload failed');
         }
