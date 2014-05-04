@@ -1,4 +1,22 @@
 
+
+
+/*
+ *
+ *
+ * Usage:
+ *
+ *      <form id="searchForm" method="post" data-region-id="eventListRegion" data-region-path="/event/_list">
+ *        {{ search.renderSignatureWidget|raw }}
+ *      </form>
+ *
+ *      var $form = $('#searchForm');
+ *      var search = new SearchAction($form, {}, function(args) { 
+ *          setupWaypoint(this);
+ *      });
+ *      search.run({ page: 1 });
+*/
+
 var SearchAction = function($form, options, cb) {
     this.$form = $form;
     this.cb = cb;
