@@ -5,6 +5,7 @@ collections:
     - action.css
   - js:
     - action.js
+    - search-action.js
     - action-growl.js
     - action-msgbox.js
     - action-highlight.js
