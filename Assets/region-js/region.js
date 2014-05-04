@@ -242,8 +242,11 @@ vim:sw=2:ts=2:sts=2:et:
         }
         if (that.opts.noEffect) {
           that.el.hide().html(html).show();
+          if (callback) {
+            return callback(html);
+          }
         } else {
-          that.el.fadeOut('fast', function() {
+          return that.el.fadeOut('fast', function() {
             var backbtn, effectClass, region;
             region = $(this);
             $(this).hide().html(html);
@@ -264,13 +267,13 @@ vim:sw=2:ts=2:sts=2:et:
                 backbtn = $('<div/>').addClass('region-backbtn').click(function() {
                   return that.back();
                 });
-                return that.el.append(backbtn);
+                that.el.append(backbtn);
               }
             }
+            if (callback) {
+              return callback(html);
+            }
           });
-        }
-        if (callback) {
-          return callback(html);
         }
       };
       if (Region.opts.gateway) {

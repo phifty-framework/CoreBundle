@@ -203,6 +203,7 @@ class RegionNode
 
       if that.opts.noEffect
         that.el.hide().html(html).show()
+        callback(html) if callback
       else
         # should we use animate.css? add some detection ?
         that.el.fadeOut 'fast', () ->
@@ -230,7 +231,7 @@ class RegionNode
             if that.hasHistory()
               backbtn = $('<div/>').addClass('region-backbtn').click(-> that.back() )
               that.el.append( backbtn )
-      callback(html) if callback
+          callback(html) if callback
 
     if Region.opts.gateway
       $.ajax
