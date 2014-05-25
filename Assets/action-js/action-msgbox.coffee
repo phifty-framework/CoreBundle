@@ -87,7 +87,7 @@ class ActionMsgbox extends ActionPlugin
         $text.text("Progressing")
         @container.html($box).fadeIn('fast')
 
-        if not @config.disableScroll and $.scrollTo and window.pageYOffset > 20
+        if not @config.disableScroll and typeof $.scrollTo != "undefined" and window.pageYOffset > 20
             $.scrollTo($box.get(0), 200, { offset: -20 })
 
         if @config.fadeOut

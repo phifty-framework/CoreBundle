@@ -106,7 +106,7 @@
       $box.addClass('waiting');
       $text.text("Progressing");
       this.container.html($box).fadeIn('fast');
-      if (!this.config.disableScroll && $.scrollTo && window.pageYOffset > 20) {
+      if (!this.config.disableScroll && typeof $.scrollTo !== "undefined" && window.pageYOffset > 20) {
         $.scrollTo($box.get(0), 200, {
           offset: -20
         });
