@@ -1,7 +1,17 @@
 ---
 collections:
-  - js:
-    - jquery.flexslider-min.js
-  - files:
-    - images
-    - fonts
+- stylesheet:
+  - flexslider.css
+- javascript:
+  - jquery.flexslider.js
+- files:
+  - images/bg_play_pause.png
+  - fonts/flexslider-icon.eot
+  - fonts/flexslider-icon.svg
+  - fonts/flexslider-icon.ttf
+  - fonts/flexslider-icon.woff
+  - fonts/flexslider-icon.eot
+  - fonts/flexslider-icon.svg
+  - fonts/flexslider-icon.ttf
+  - fonts/flexslider-icon.woff
+  - images/bg_play_pause.png
