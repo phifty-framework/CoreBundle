@@ -89,7 +89,8 @@ class Action
             @formEl = $(f)
             @formEl.attr('method','post')
             # auto setup enctype for uploading file.
-            @formEl.attr "enctype", "multipart/form-data"
+            @formEl.attr("enctype", "multipart/form-data")
+            @formEl.data("actionObject", this)
             @actionName = @formEl.find('input[name=action]').val()
 
             alert "Action form element not found" if not @formEl.get(0)
@@ -388,7 +389,7 @@ class Action
         data = @getData( $form )
 
         if @options.beforeSubmit
-            ret = @options.beforeSubmit.call($form, data )
+            ret = @options.beforeSubmit.call($form, data)
             return false if ret is false
 
         $(this).trigger('action.before_submit',[data])
