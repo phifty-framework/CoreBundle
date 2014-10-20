@@ -1,0 +1,6 @@
+---
+collections:
+- stylesheet:
+  - outdatedbrowser.css
+- javascript:
+  - outdatedbrowser.js
