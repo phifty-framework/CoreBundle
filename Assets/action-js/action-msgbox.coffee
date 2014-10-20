@@ -88,12 +88,13 @@ class ActionMsgbox extends ActionPlugin
         @container.html($box).fadeIn('fast')
 
         if not @config.disableScroll and $.scrollTo and window.pageYOffset > 20
-            $.scrollTo($box.get(0), 200, { offset: -20 })
+          scrollOffset = @config.scrollOffset or -20
+          $.scrollTo($box.get(0), 200, { offset: scrollOffset })
 
         if @config.fadeOut
-            setTimeout((=>
-                @container.fadeOut('fast', (=> @container.empty()))
-            ), 1200)
+          setTimeout((=>
+              @container.fadeOut('fast', (=> @container.empty()))
+          ), 1200)
 
     extErrorMsgs: (resp) ->
         for field,v of resp.validations

@@ -9,3 +9,4 @@ collections:
     - action-growl.js
     - action-msgbox.js
     - action-highlight.js
+    - action-loader.js

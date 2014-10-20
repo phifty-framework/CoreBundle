@@ -84,7 +84,7 @@
     };
 
     ActionMsgbox.prototype.wait = function() {
-      var $box, $close, $desc, $icon, $text;
+      var $box, $close, $desc, $icon, $text, scrollOffset;
       $box = $('<div/>').addClass('message');
       $text = $('<div/>').addClass('text');
       $desc = $('<div/>').addClass('desc');
@@ -105,8 +105,9 @@
       $text.text("Progressing");
       this.container.html($box).fadeIn('fast');
       if (!this.config.disableScroll && $.scrollTo && window.pageYOffset > 20) {
+        scrollOffset = this.config.scrollOffset || -20;
         $.scrollTo($box.get(0), 200, {
-          offset: -20
+          offset: scrollOffset
         });
       }
       if (this.config.fadeOut) {
