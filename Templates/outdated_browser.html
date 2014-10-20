@@ -1,23 +1,23 @@
-<script>
-    //event listener form DOM ready
-    function addLoadEvent(func) {
-        var oldonload = window.onload;
-        if (typeof window.onload != 'function') {
-            window.onload = func;
-        } else {
-            window.onload = function() {
-                oldonload();
-                func();
-            }
+<script type="text/javascript">
+//event listener form DOM ready
+function addLoadEvent(func) {
+    var oldonload = window.onload;
+    if (typeof window.onload != 'function') {
+        window.onload = func;
+    } else {
+        window.onload = function() {
+            oldonload();
+            func();
         }
     }
-    //call function after DOM ready
-    addLoadEvent(
-        outdatedBrowser({
-            bgColor: '#f25648',
-            color: '#ffffff',
-            lowerThan: 'transform',
-            languagePath: '/assets/outdated-browser/lang/en.html'
-        })
-    );
+}
+//call function after DOM ready
+addLoadEvent(
+  outdatedBrowser({
+    bgColor: '#f25648',
+    color: '#ffffff',
+    lowerThan: 'IE9',
+    languagePath: '/assets/outdated-browser/lang/en.html'
+  })
+);
 </script>
