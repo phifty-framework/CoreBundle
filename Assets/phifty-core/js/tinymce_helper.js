@@ -78,10 +78,15 @@ tinyMCE_Helper.get_schema = function(name,args) {
     return s;
 };
 
+
+window.tinyMCEPreInit = {
+    // suffix : '_1',
+    base : '/assets/phifty-core/js/tinymce/' // your path to tinyMCE
+};
+
 tinyMCE_Helper.init = function( name , args ) {
     name = name || "default";
     var schema = this.get_schema( name , args );
-    tinyMCE.baseURL = '/assets/phifty-core/js/tinymce/';
     tinyMCE.init( schema );
 };
 
@@ -98,4 +103,3 @@ function use_tinymce(name,args) {
         tinyMCE.init( schema );
     });
 }
-
