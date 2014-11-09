@@ -291,7 +291,6 @@ USAGE
       $self = $(self);
       return function(resp) {
         var ret;
-        self.log('action.on_result', [resp]);
         $self.trigger('action.on_result', [resp]);
         if (formEl && options.disableInput) {
           FormUtils.enableInputs(formEl);
@@ -412,7 +411,6 @@ USAGE
           action: actionName,
           __ajax_request: 1
         }, args);
-        this.log("Running action: ", actionName, 'Args', args, 'Options', this.options);
         if (this.options.onSubmit) {
           this.options.onSubmit();
         }
@@ -430,7 +428,6 @@ USAGE
         }
         errorHandler = this._createErrorHandler(formEl, this.options);
         successHandler = this._createSuccessHandler(formEl, this.options, cb);
-        this.log('Sending Ajax Request: ', postUrl, data);
         jQuery.ajax($.extend(this.ajaxOptions, {
           url: postUrl,
           data: data,
@@ -500,7 +497,6 @@ USAGE
       if (!actionName) {
         throw "action name field is required";
       }
-      this.log("submitting action " + actionName + " with AIM");
       that = this;
       return AIM.submit($form.get(0), {
         onStart: function() {
@@ -512,9 +508,6 @@ USAGE
         onComplete: function(responseText) {
           var e, json;
           try {
-            if (window.console) {
-              console.log("AIM ResponseText:", responseText);
-            }
             json = JSON.parse(responseText);
             successHandler(json, that.options.onUpload);
             if (that.options.afterUpload) {
