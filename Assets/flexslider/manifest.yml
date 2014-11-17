@@ -1,7 +1,0 @@
----
-collections:
-  - js:
-    - jquery.flexslider-min.js
-  - files:
-    - images
-    - fonts

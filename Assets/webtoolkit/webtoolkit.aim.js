@@ -33,8 +33,10 @@ AIM = {
     submit : function(f, c) {
         AIM.form(f, AIM.frame(c));
         if (c && typeof(c.onStart) == 'function') {
+            /*
             if(window.console)
                 console.log("Running AIM.onStart");
+            */
             return c.onStart();
         } else {
             return true;
@@ -57,10 +59,12 @@ AIM = {
         if (typeof(i.onComplete) == 'function') {
             if( window.console )
                 console.warn("Running AIM.onComplete");
-            var match = /(\{.+\}).+/.exec(d.body.innerHTML);
+            var match = /(\{.+\})/.exec(d.body.innerHTML);
             if (match) {
-                if ( window.console )
+                /*
+                if (window.console)
                     console.log(match[1]);
+                */
                 i.onComplete(match[1]);
             }
         }

@@ -1,5 +1,6 @@
 ---
 collections:
-  - js:
+  - compressors: ['no']
+    js:
     - src-min/ace.js
     #    - src-min-noconflict/ace.js

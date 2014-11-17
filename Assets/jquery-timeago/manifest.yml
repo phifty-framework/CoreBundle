@@ -1,0 +1,4 @@
+---
+collections:
+- javascript:
+  - jquery.timeago.js

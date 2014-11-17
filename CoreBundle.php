@@ -24,6 +24,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             'action-js',
             'region-js',
             'phifty-core',
+            'outdated-browser',
             'ace',
         );
     }
@@ -35,7 +36,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
 
         // register twig function for exception
         if( $this->kernel->isDev ) {
-            $this->kernel->twig->env->addFunction('trace_get_block'  , new Twig_Function_Function('CoreBundle\Controller\trace_get_block'));
+            // $this->kernel->twig->env->addFunction('trace_get_block'  , new Twig_Function_Function('CoreBundle\Controller\trace_get_block'));
             $this->route( '/_dev/code' , 'ExceptionController:code' );
             $this->route( '/_dev/info' , 'InfoController:phpinfo' );
             $this->route( '/_dev/session', 'InfoController:session' );
