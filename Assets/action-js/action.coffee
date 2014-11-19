@@ -23,6 +23,7 @@ window.FormUtils =
     findFields: (form) ->
         return $(form).find 'select, textarea,
              input[type=text],
+             input[type=number],
              input[type=checkbox],
              input[type=radio],
              input[type=password],
@@ -36,6 +37,7 @@ window.FormUtils =
         return $(form).find 'select, textarea,
                     input[type=text],
                     input[type=date],
+                    input[type=number],
                     input[type=datetime],
                     input[type=time],
                     input[type=checkbox],
@@ -47,6 +49,7 @@ window.FormUtils =
         return $(form).find 'input[type="text"],
                       input[type="file"],
                       input[type="time"],
+                      input[type="number"],
                       input[type="datetime"],
                       input[type="date"],
                       input[type="password"],
