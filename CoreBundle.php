@@ -13,6 +13,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             'jquery-1.8',
             // 'json-js',
             'jquery-scrollto',
+            'jquery-cookie',
             'simpleclass-js',
             // 'underscore-js',
             // 'backbone-js',
