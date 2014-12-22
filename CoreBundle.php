@@ -26,6 +26,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             'region-js',
             'phifty-core',
             'outdated-browser',
+            'superfish',
             'ace',
         );
     }
