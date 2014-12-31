@@ -44,24 +44,24 @@ class ActionMsgbox extends ActionPlugin
             $text = $('<div/>').addClass 'text'
             $desc = $('<div/>').addClass 'desc'
             # <span style="float: left; " class="ui-icon ui-icon-notice"> </span>
-            $icon = $('<i/>').css( float: 'left' ).addClass('icon')
+            $icon = $('<i/>').css( float: 'left' ).addClass('icon fa')
 
             # <span onclick="$(this).parent().fadeOut();" style="position: absolute; top: 6px; right: 6px;" class="ui-icon ui-icon-circle-close"> </span>
             $close = $('<span/>').css( position: 'absolute', top: 6, right: 6 )
-                        .addClass('icon-remove')
+                        .addClass('fa fa-times-circle')
                         .click( -> $box.fadeOut('slow', -> $box.remove() ) )
 
             $box.append($icon).append($text).append($desc).append($close)
 
             if resp.success
                 $box.addClass 'success'
-                $icon.addClass 'icon-ok-sign'
+                $icon.addClass 'fa-check-circle'
                 $text.text(resp.message)
                 self.container.html($box).fadeIn('fast')
             else if resp.error
                 self.container.empty()
                 $box.addClass 'error'
-                $icon.addClass 'icon-warning-sign'
+                $icon.addClass 'fa-warning'
                 $text.text(resp.message)
                 self.container.html($box).fadeIn('fast')
 
@@ -80,7 +80,7 @@ class ActionMsgbox extends ActionPlugin
 
         # <span onclick="$(this).parent().fadeOut();" style="position: absolute; top: 6px; right: 6px;" class="ui-icon ui-icon-circle-close"> </span>
         $close = $('<span/>').css( position: 'absolute', top: 6, right: 6 )
-                    .addClass('ui-icon ui-icon-circle-close')
+                    .addClass('fa fa-times-circle')
                     .click( -> $box.fadeOut('slow', -> $box.remove() ) )
         $box.append($icon).append($text).append($desc).append($close)
         $box.addClass 'waiting'

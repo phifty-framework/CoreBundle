@@ -44,12 +44,12 @@
         $desc = $('<div/>').addClass('desc');
         $icon = $('<i/>').css({
           float: 'left'
-        }).addClass('icon');
+        }).addClass('icon fa');
         $close = $('<span/>').css({
           position: 'absolute',
           top: 6,
           right: 6
-        }).addClass('icon-remove').click(function() {
+        }).addClass('fa fa-times-circle').click(function() {
           return $box.fadeOut('slow', function() {
             return $box.remove();
           });
@@ -57,13 +57,13 @@
         $box.append($icon).append($text).append($desc).append($close);
         if (resp.success) {
           $box.addClass('success');
-          $icon.addClass('icon-ok-sign');
+          $icon.addClass('fa-check-circle');
           $text.text(resp.message);
           self.container.html($box).fadeIn('fast');
         } else if (resp.error) {
           self.container.empty();
           $box.addClass('error');
-          $icon.addClass('icon-warning-sign');
+          $icon.addClass('fa-warning');
           $text.text(resp.message);
           self.container.html($box).fadeIn('fast');
         }
@@ -95,7 +95,7 @@
         position: 'absolute',
         top: 6,
         right: 6
-      }).addClass('ui-icon ui-icon-circle-close').click(function() {
+      }).addClass('fa fa-times-circle').click(function() {
         return $box.fadeOut('slow', function() {
           return $box.remove();
         });
