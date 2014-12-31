@@ -12,6 +12,9 @@ tinyMCE_Helper = {
                 theme : "advanced",
                 plugins : "autolink,lists,spellchecker,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,imagechooser",
 
+                force_p_newlines : false,
+                forced_root_block: false,
+
                 mode : "specific_textareas",
                 editor_selector : "mceEditor",
 
