@@ -23,6 +23,7 @@ window.FormUtils =
     findFields: (form) ->
         return $(form).find 'select, textarea,
              input[type=text],
+             input[type=number],
              input[type=checkbox],
              input[type=radio],
              input[type=password],
@@ -36,6 +37,7 @@ window.FormUtils =
         return $(form).find 'select, textarea,
                     input[type=text],
                     input[type=date],
+                    input[type=number],
                     input[type=datetime],
                     input[type=time],
                     input[type=checkbox],
@@ -47,6 +49,7 @@ window.FormUtils =
         return $(form).find 'input[type="text"],
                       input[type="file"],
                       input[type="time"],
+                      input[type="number"],
                       input[type="datetime"],
                       input[type="date"],
                       input[type="password"],
@@ -89,7 +92,8 @@ class Action
             @formEl = $(f)
             @formEl.attr('method','post')
             # auto setup enctype for uploading file.
-            @formEl.attr "enctype", "multipart/form-data"
+            @formEl.attr("enctype", "multipart/form-data")
+            @formEl.data("actionObject", this)
             @actionName = @formEl.find('input[name=action]').val()
 
             alert "Action form element not found" if not @formEl.get(0)
@@ -238,9 +242,10 @@ class Action
         # which is an Action object.
         self = this
         $self = $(self)
+
         return (resp) ->
             # trigger event for plugins
-            self.log 'action.on_result',[resp]
+            # self.log 'action.on_result',[resp]
             $self.trigger 'action.on_result',[resp]
 
             FormUtils.enableInputs(formEl) if formEl and options.disableInput
@@ -332,7 +337,7 @@ class Action
 
             # inject __ajax_request: 1 if there is no form element.
             data = $.extend({ action: actionName, __ajax_request: 1 }, args )
-            @log( "Running action: " , actionName , 'Args' , args , 'Options' , @options )
+            # @log( "Running action: " , actionName , 'Args' , args , 'Options' , @options )
 
             @options.onSubmit() if @options.onSubmit
 
@@ -353,7 +358,7 @@ class Action
             errorHandler = @_createErrorHandler( formEl, @options )
             successHandler = @_createSuccessHandler( formEl, @options, cb )
 
-            @log( 'Sending Ajax Request: ', postUrl , data )
+            # @log( 'Sending Ajax Request: ', postUrl , data )
 
             jQuery.ajax $.extend @ajaxOptions,
                 url: postUrl
@@ -388,7 +393,7 @@ class Action
         data = @getData( $form )
 
         if @options.beforeSubmit
-            ret = @options.beforeSubmit.call($form, data )
+            ret = @options.beforeSubmit.call($form, data)
             return false if ret is false
 
         $(this).trigger('action.before_submit',[data])
@@ -420,7 +425,7 @@ class Action
         actionName = $form.find('input[name="action"]').val()
         throw "action name field is required" unless actionName
 
-        @log("submitting action #{ actionName } with AIM")
+        # @log("submitting action #{ actionName } with AIM")
         that = this
 
         # AIM bridge
@@ -430,7 +435,7 @@ class Action
                 return true
             onComplete: (responseText) ->
                 try
-                    console.log "AIM ResponseText:", responseText if window.console
+                    # console.log "AIM ResponseText:", responseText if window.console
                     json = JSON.parse responseText
 
                     # callback is optional, the successHandler is a callback wrapper

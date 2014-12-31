@@ -202,7 +202,7 @@ class RegionNode
 
 
       if that.opts.noEffect
-        that.el.hide().html(html).show()
+        that.el.hide().html(html).show 100, (-> callback(html) if callback)
       else
         # should we use animate.css? add some detection ?
         that.el.fadeOut 'fast', () ->
@@ -221,16 +221,17 @@ class RegionNode
             # remove the animated class name, so that we can repeat the animation
             $(this).removeClass('animated flipInY')
             setTimeout (->
-              that.el.addClass('animated flipInY').show()
+              that.el.addClass('animated flipInY').show 100, ->
+                callback(html) if callback
             ), 10
           else
-            $(this).fadeIn('fast')
+            $(this).fadeIn 'fast', () ->
+              callback(html) if callback
 
           if that.opts.historyBtn or Region.opts.historyBtn
             if that.hasHistory()
               backbtn = $('<div/>').addClass('region-backbtn').click(-> that.back() )
               that.el.append( backbtn )
-      callback(html) if callback
 
     if Region.opts.gateway
       $.ajax

@@ -241,9 +241,13 @@ vim:sw=2:ts=2:sts=2:et:
           }), 2000);
         }
         if (that.opts.noEffect) {
-          that.el.hide().html(html).show();
+          return that.el.hide().html(html).show(100, (function() {
+            if (callback) {
+              return callback(html);
+            }
+          }));
         } else {
-          that.el.fadeOut('fast', function() {
+          return that.el.fadeOut('fast', function() {
             var backbtn, effectClass, region;
             region = $(this);
             $(this).hide().html(html);
@@ -254,10 +258,18 @@ vim:sw=2:ts=2:sts=2:et:
             if (effectClass) {
               $(this).removeClass('animated flipInY');
               setTimeout((function() {
-                return that.el.addClass('animated flipInY').show();
+                return that.el.addClass('animated flipInY').show(100, function() {
+                  if (callback) {
+                    return callback(html);
+                  }
+                });
               }), 10);
             } else {
-              $(this).fadeIn('fast');
+              $(this).fadeIn('fast', function() {
+                if (callback) {
+                  return callback(html);
+                }
+              });
             }
             if (that.opts.historyBtn || Region.opts.historyBtn) {
               if (that.hasHistory()) {
@@ -268,9 +280,6 @@ vim:sw=2:ts=2:sts=2:et:
               }
             }
           });
-        }
-        if (callback) {
-          return callback(html);
         }
       };
       if (Region.opts.gateway) {

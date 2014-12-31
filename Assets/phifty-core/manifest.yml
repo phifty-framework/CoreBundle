@@ -4,10 +4,11 @@ collections:
     - images/
     - css/
     - js/
-  - js:
-    - js/tinymce/tiny_mce.js
-    - js/tinymce_helper.js
-  - css:
+#   - compressors: [ 'no' ]
+#     javascript:
+#     - js/tinymce/tiny_mce.js
+#     - js/tinymce_helper.js
+  - stylesheet:
     - css/common.css
     - css/gstyle.css
     - css/phifty.css

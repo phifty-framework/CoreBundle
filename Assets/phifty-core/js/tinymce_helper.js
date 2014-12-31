@@ -78,19 +78,28 @@ tinyMCE_Helper.get_schema = function(name,args) {
     return s;
 };
 
+
+window.tinyMCEPreInit = {
+    // suffix : '_1',
+    base : '/assets/phifty-core/js/tinymce/' // your path to tinyMCE
+};
+
 tinyMCE_Helper.init = function( name , args ) {
     name = name || "default";
     var schema = this.get_schema( name , args );
-    tinyMCE.baseURL = '/assets/phifty-core/js/tinymce/';
     tinyMCE.init( schema );
 };
 
 function use_tinymce(name,args) {
     $(document.body).ready(function() {
+        tinyMCE.EditorManager.triggerSave();
         $(tinyMCE.editors).each(function(){
-            tinyMCE.remove(this);
+            console.log(this);
+            this.remove();
+            this.destroy();
         });
-        tinyMCE_Helper.init( name , args );
+        var schema = tinyMCE_Helper.get_schema( name || "default" , args );
+        tinyMCE.baseURL = '/assets/phifty-core/js/tinymce/';
+        tinyMCE.init( schema );
     });
 }
-

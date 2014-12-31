@@ -1,0 +1,6 @@
+---
+collections:
+  - css:
+    - css/font-awesome.css
+  - files:
+    - fonts

@@ -1,0 +1,4 @@
+---
+collections:
+  - js:
+    - jquery.cookie-1.4.1.min.js

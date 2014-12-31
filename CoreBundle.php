@@ -2,8 +2,9 @@
 namespace CoreBundle;
 use Phifty\Bundle;
 use Twig_Function_Function;
+use Phifty\ComposerConfigBridge;
 
-class CoreBundle extends Bundle
+class CoreBundle extends Bundle implements ComposerConfigBridge
 {
     public function assets()
     {
@@ -12,6 +13,7 @@ class CoreBundle extends Bundle
             'jquery-1.8',
             // 'json-js',
             'jquery-scrollto',
+            'jquery-cookie',
             'simpleclass-js',
             // 'underscore-js',
             // 'backbone-js',
@@ -23,6 +25,8 @@ class CoreBundle extends Bundle
             'action-js',
             'region-js',
             'phifty-core',
+            'outdated-browser',
+            'superfish',
             'ace',
         );
     }
@@ -34,12 +38,21 @@ class CoreBundle extends Bundle
 
         // register twig function for exception
         if( $this->kernel->isDev ) {
-            $this->kernel->twig->env->addFunction('trace_get_block'  , new Twig_Function_Function('CoreBundle\Controller\trace_get_block'));
+            // $this->kernel->twig->env->addFunction('trace_get_block'  , new Twig_Function_Function('CoreBundle\Controller\trace_get_block'));
             $this->route( '/_dev/code' , 'ExceptionController:code' );
             $this->route( '/_dev/info' , 'InfoController:phpinfo' );
             $this->route( '/_dev/session', 'InfoController:session' );
             $this->route( '/_dev/server', 'InfoController:server' );
         }
     }
+
+
+    public function getComposerDependency() {
+        return [
+            "php"                       => ">=5.3.0",
+            "corneltek/phifty-core"    => "dev-master",
+        ];
+    }
+
 }
 
