@@ -180,7 +180,7 @@ class RegionNode
     that = this
     @setWaitingContent()
 
-    console.log( "Request region, Path:" , path , "Args:" , args ) if window.console
+    console.log("Request region, Path:" , path , "Args:" , args) if window.console
 
     onError = (e) ->
       if Region.opts.statusbar
@@ -203,6 +203,7 @@ class RegionNode
 
       if that.opts.noEffect
         that.el.hide().html(html).show 100, (-> callback(html) if callback)
+        $(Region).trigger('region.load', [ that.el ])
       else
         # should we use animate.css? add some detection ?
         that.el.fadeOut 'fast', () ->
@@ -212,6 +213,7 @@ class RegionNode
 
           # hide the region container, then append the content, which improve the rendering performance.
           $(this).hide().html(html)
+          $(Region).trigger('region.load', [that.el])
           return if that.opts.noEffect
 
           effectClass = region.data('effectClass')
