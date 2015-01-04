@@ -5,17 +5,17 @@
       var $form, $result, a, resultContainerSel;
       $form = $(f);
       a = Action.form($form, {
-        clear: $form.data('clear'),
-        fadeOut: $form.data('fadeOut'),
+        clear: $form.data('clear') || false,
+        fadeOut: $form.data('fadeout') || false,
         onSuccess: function(resp) {
           var cb;
-          cb = eval($form.data('onSuccess'));
+          cb = eval($form.data('onsuccess'));
           if (cb) {
             return cb.call(resp);
           }
         }
       });
-      resultContainerSel = $form.data('resultContainer');
+      resultContainerSel = $form.data('result-container');
       $result = void 0;
       if (resultContainerSel) {
         $result = $(resultContainerSel);
@@ -31,7 +31,7 @@
       }
       return a.plug(ActionMsgbox, {
         container: $result,
-        scrollOffset: $form.data('scrollOffset'),
+        scrollOffset: $form.data('scroll-offset'),
         fadeOut: false
       });
     });

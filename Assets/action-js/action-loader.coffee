@@ -2,14 +2,14 @@ jQuery ->
   jQuery('form.ajax-action').each (i,f) ->
     $form = $(f)
     a = Action.form $form,
-      clear: $form.data('clear')
-      fadeOut: $form.data('fadeOut')
+      clear: $form.data('clear') or false
+      fadeOut: $form.data('fadeout') or false
       onSuccess: (resp) ->
-        cb = eval($form.data('onSuccess'))
+        cb = eval($form.data('onsuccess'))
         if cb
           cb.call(resp)
 
-    resultContainerSel = $form.data('resultContainer')
+    resultContainerSel = $form.data('result-container')
     $result = undefined
     if resultContainerSel
       $result = $(resultContainerSel)
@@ -29,5 +29,5 @@ jQuery ->
     # dynamically create a result container before the form
     a.plug ActionMsgbox,
       container: $result
-      scrollOffset: $form.data('scrollOffset')
+      scrollOffset: $form.data('scroll-offset')
       fadeOut: false
