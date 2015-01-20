@@ -390,11 +390,7 @@ vim:sw=2:ts=2:sts=2:et:
           return jQuery.fn.slideDown;
         }
       } else {
-        if (hide) {
-          return jQuery.fn.slideUp;
-        } else {
-          return jQuery.fn.slideDown;
-        }
+
       }
     };
 

@@ -307,7 +307,7 @@ class RegionNode
     else if ef is "slide"
       return if hide then jQuery.fn.slideUp else jQuery.fn.slideDown
     else
-      return if hide then jQuery.fn.slideUp else jQuery.fn.slideDown
+      return
 
   effectRemove: () ->
     that = this
