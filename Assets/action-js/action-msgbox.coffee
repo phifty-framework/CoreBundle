@@ -51,7 +51,9 @@ class ActionMsgbox extends ActionPlugin
                         .addClass('fa fa-times-circle')
                         .click( -> $box.fadeOut('slow', -> $box.remove() ) )
 
-            $box.append($icon).append($text).append($desc).append($close)
+            $box.append($icon).append($text)
+            $box.append($desc) if resp.desc
+            $box.append($close)
 
             if resp.success
                 $box.addClass 'success'

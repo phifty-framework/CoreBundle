@@ -54,7 +54,11 @@
             return $box.remove();
           });
         });
-        $box.append($icon).append($text).append($desc).append($close);
+        $box.append($icon).append($text);
+        if (resp.desc) {
+          $box.append($desc);
+        }
+        $box.append($close);
         if (resp.success) {
           $box.addClass('success');
           $icon.addClass('fa-check-circle');
