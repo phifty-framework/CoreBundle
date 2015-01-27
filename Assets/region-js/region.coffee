@@ -220,9 +220,7 @@ class RegionNode
       else
         # TODO: here the animation stuff should be a event handler or a callback.
         region = that.el
-
-        # hide the region container, then append the content, which improve the rendering performance.
-        region.hide().html(html)
+        region.html(html)
         $(Region).trigger('region.load', [that.el])
         return if that.opts.noEffect
 

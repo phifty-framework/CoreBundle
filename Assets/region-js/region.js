@@ -265,7 +265,7 @@ vim:sw=2:ts=2:sts=2:et:
           return $(Region).trigger('region.load', [that.el]);
         } else {
           region = that.el;
-          region.hide().html(html);
+          region.html(html);
           $(Region).trigger('region.load', [that.el]);
           if (that.opts.noEffect) {
             return;
