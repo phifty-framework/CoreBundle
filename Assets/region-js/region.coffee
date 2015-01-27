@@ -456,7 +456,6 @@ Region.replace = (el,path,arg1,arg2) ->
     rn.save()
     return rn
 
-
 jQuery.fn.asRegion = (opts) ->
   r = $(this).data('region')
   return r if r
