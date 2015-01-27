@@ -202,25 +202,43 @@ vim:sw=2:ts=2:sts=2:et:
       return bar;
     };
 
-    RegionNode.prototype.setWaitingContent = function() {
-      var bar, waitingImg;
-      if (Region.opts.statusbar) {
-        bar = this.getStatusbarEl();
-        bar.addClass('loading').html("Loading content ...").show();
+    RegionNode.prototype.getLoadingIndicator = function() {
+      var $pyramid, $stage;
+      if (this.indicator) {
+        return this.indicator;
       }
-      waitingImg = $('<div/>').addClass('region-loading');
-      return this.el.html(waitingImg);
+      $stage = $('<div/>').addClass('pyramid-stage');
+      $pyramid = $('<div/>').addClass('pyramid');
+      $pyramid.append($('<div class="square side1"></div>'));
+      $pyramid.append($('<div class="triangle side2"></div>'));
+      $pyramid.append($('<div class="triangle side3"></div>'));
+      $pyramid.append($('<div class="triangle side4"></div>'));
+      $pyramid.append($('<div class="triangle side5"></div>'));
+      $pyramid.appendTo($stage);
+      return this.indicator = $stage;
     };
 
     RegionNode.prototype._request = function(path, args, callback) {
-      var onError, onSuccess, that;
+      var $el, $stage, offset, onError, onSuccess, that;
       that = this;
-      this.setWaitingContent();
+      $(Region).trigger('region.waiting', [this]);
       if (window.console) {
         console.log("Request region, Path:", path, "Args:", args);
       }
+      $el = this.getEl();
+      $el.addClass('region-loading');
+      offset = $el.offset();
+      $stage = this.getLoadingIndicator();
+      $el.append($stage);
+      $stage.css({
+        position: 'absolute',
+        top: '40%',
+        left: '44%',
+        display: 'block'
+      });
       onError = function(e) {
         var d;
+        $el.removeClass('region-loading');
         if (Region.opts.statusbar) {
           d = $('<div/>').addClass('region-message region-error');
           d.html("Path: " + path + " " + (e.statusText || e.responseText));
@@ -234,12 +252,10 @@ vim:sw=2:ts=2:sts=2:et:
         }
       };
       onSuccess = function(html) {
-        if (Region.opts.statusbar) {
-          that.getStatusbarEl().addClass('animated bounceOutDown');
-          setTimeout((function() {
-            return that.getStatusbarEl().hide().removeClass('animated bounceOutDown');
-          }), 2000);
-        }
+        var effectClass, region;
+        $(Region).trigger('region.finish', [this]);
+        $stage.remove();
+        $el.removeClass('region-loading');
         if (that.opts.noEffect) {
           that.el.hide().html(html).show(100, (function() {
             if (callback) {
@@ -248,40 +264,29 @@ vim:sw=2:ts=2:sts=2:et:
           }));
           return $(Region).trigger('region.load', [that.el]);
         } else {
-          return that.el.fadeOut('fast', function() {
-            var backbtn, effectClass, region;
-            region = $(this);
-            $(this).hide().html(html);
-            $(Region).trigger('region.load', [that.el]);
-            if (that.opts.noEffect) {
-              return;
-            }
-            effectClass = region.data('effectClass');
-            if (effectClass) {
-              $(this).removeClass('animated flipInY');
-              setTimeout((function() {
-                return that.el.addClass('animated flipInY').show(100, function() {
-                  if (callback) {
-                    return callback(html);
-                  }
-                });
-              }), 10);
-            } else {
-              $(this).fadeIn('fast', function() {
+          region = that.el;
+          region.hide().html(html);
+          $(Region).trigger('region.load', [that.el]);
+          if (that.opts.noEffect) {
+            return;
+          }
+          effectClass = region.data('effectClass');
+          if (effectClass) {
+            region.removeClass('animated flipInY');
+            return setTimeout((function() {
+              return that.el.addClass('animated flipInY').show(100, function() {
                 if (callback) {
                   return callback(html);
                 }
               });
-            }
-            if (that.opts.historyBtn || Region.opts.historyBtn) {
-              if (that.hasHistory()) {
-                backbtn = $('<div/>').addClass('region-backbtn').click(function() {
-                  return that.back();
-                });
-                return that.el.append(backbtn);
+            }), 10);
+          } else {
+            return region.fadeIn('fast', function() {
+              if (callback) {
+                return callback(html);
               }
-            }
-          });
+            });
+          }
         }
       };
       if (Region.opts.gateway) {
