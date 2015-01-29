@@ -191,7 +191,7 @@ class RegionNode
 
     $stage = @getLoadingIndicator()
     $el.append($stage)
-    $stage.css({ position: 'absolute', top: '40%', left: '44%', display: 'block' })
+    # $stage.css({ position: 'absolute', top: '40%', left: '44%', display: 'block' })
     # attach to the size of region element
 
     onError = (e) ->

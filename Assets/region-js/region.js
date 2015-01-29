@@ -230,12 +230,6 @@ vim:sw=2:ts=2:sts=2:et:
       offset = $el.offset();
       $stage = this.getLoadingIndicator();
       $el.append($stage);
-      $stage.css({
-        position: 'absolute',
-        top: '40%',
-        left: '44%',
-        display: 'block'
-      });
       onError = function(e) {
         var d;
         $el.removeClass('region-loading');
