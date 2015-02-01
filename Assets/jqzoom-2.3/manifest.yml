@@ -2,7 +2,7 @@
 collections:
   - js:
     - js/jquery.jqzoom-core.js
-  - files:
+  - file:
     - images
   - css:
     - css/jquery.jqzoom.css

@@ -2,5 +2,5 @@
 collections:
   - css:
     - css/font-awesome.css
-  - files:
+  - file:
     - fonts

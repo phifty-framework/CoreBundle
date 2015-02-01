@@ -1,6 +1,6 @@
 ---
 collections:
-  - files: [ images ]
+  - file: [ images ]
   - css:
     - action.css
   - js:
