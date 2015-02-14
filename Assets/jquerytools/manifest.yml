@@ -4,6 +4,3 @@ collections:
     - scrollable/scrollable.js
     - scrollable/scrollable.navigator.js
     - scrollable/scrollable.autoscroll.js
-#    - js: 1
-#      files:
-#        - jquery.tools.min.js
