@@ -46,7 +46,7 @@ vim:filetype=htmldjango:
         <div class="buttons">
 
             <form style=" display: inline; margin:0; padding:0; " name="lang_select" method="post">
-                <input type="hidden" name="action" value="I18N::Action::ChooseLang"/>
+                <input type="hidden" name="__action" value="I18N::Action::ChooseLang"/>
                 {% set currentLang = Kernel.locale.current %}
                 {% set langList = Kernel.locale.getLangList %}
                 <select name="lang" onchange=" this.form.submit();" style="margin:0;">

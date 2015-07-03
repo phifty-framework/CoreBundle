@@ -94,7 +94,7 @@ class Action
             # auto setup enctype for uploading file.
             @formEl.attr("enctype", "multipart/form-data")
             @formEl.data("actionObject", this)
-            @actionName = @formEl.find('input[name=action]').val()
+            @actionName = @formEl.find('input[name=__action]').val()
 
             alert "Action form element not found" if not @formEl.get(0)
             alert "Action name is undefined." if not @actionName
@@ -336,7 +336,7 @@ class Action
                 return false if not confirm @options.confirm
 
             # inject __ajax_request: 1 if there is no form element.
-            data = $.extend({ action: actionName, __ajax_request: 1 }, args )
+            data = $.extend({ __action: actionName, __ajax_request: 1 }, args )
             # @log( "Running action: " , actionName , 'Args' , args , 'Options' , @options )
 
             @options.onSubmit() if @options.onSubmit
@@ -422,7 +422,7 @@ class Action
         if typeof AIM is "undefined"
             alert "AIM is required for uploading file in ajax mode."
 
-        actionName = $form.find('input[name="action"]').val()
+        actionName = $form.find('input[name="__action"]').val()
         throw "action name field is required" unless actionName
 
         # @log("submitting action #{ actionName } with AIM")

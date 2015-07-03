@@ -141,7 +141,7 @@ Action = function(arg1,arg2) {
     };
 
     if( this.formEl ) {
-        this.name = this.formEl.find('*[name=action]').val();
+        this.name = this.formEl.find('*[name=__action]').val();
         if( ! this.name )
             throw "Action name is undefined.";
     }
