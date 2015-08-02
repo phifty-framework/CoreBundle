@@ -1,0 +1,60 @@
+
+.dropbox {
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    background: #fff;
+    padding: 50px;
+    margin: 20px;
+}
+
+.dropbox.dropbox-drag-over {
+    border: 1px solid #8b3;
+    background: #cf6;
+}
+
+.dropbox-hint {
+    margin: 10px 20px;
+    font-weight: bold;
+    font-size: 2em;
+    text-shadow: 1px 1px #ccc;
+}
+
+.dropbox-queue { margin: 20px; }
+
+.dropbox-queue .progress { 
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.progress > progress {
+    width: 20em;
+}
+
+.progress > .percentage { 
+    display: inline-block;
+    margin-left: 5px;
+    font-weight: bold;
+    text-shadow: 1px 1px #fff;
+}
+
+.progress > .filename { 
+    display: inline-block;
+    margin-left: 5px;
+    background: white;
+    padding: 2px 4px;
+    border-radius: 5px;
+    color: #555;
+    text-shadow: 1px 1px #DDD;
+    border: 1px solid #CCC;
+}
+.progress > .filesize { 
+    display: inline-block;
+    margin-left: 5px;
+    background: white;
+    padding: 2px 4px;
+    border-radius: 5px;
+    color: #555;
+    text-shadow: 1px 1px #DDD;
+    border: 1px solid #CCC;
+}
+
