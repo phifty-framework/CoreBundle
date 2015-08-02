@@ -1,11 +1,12 @@
 {
     "name": "corneltek/corebundle",
+    "description": "The core bundle",
     "authors": [
         {
             "name": "c9s",
             "email": "yoanlin93@gmail.com"
         }
     ],
-    "require": {},
+    "require": { },
     "autoload": { "psr-4":  { "CoreBundle\\": "" } }
 }
