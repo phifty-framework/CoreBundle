@@ -1,0 +1,5 @@
+---
+collections:
+  - compressors: ['no']
+    javascript:
+    - coffeekup.js
