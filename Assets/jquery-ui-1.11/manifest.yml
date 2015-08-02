@@ -1,0 +1,10 @@
+---
+collections:
+  - file:
+    - images
+  - css:
+    - css/jquery-ui.min.css
+    - css/jquery-ui.structure.min.css
+    - css/jquery-ui.theme.min.css
+  - js:
+    - js/jquery-ui.min.js
