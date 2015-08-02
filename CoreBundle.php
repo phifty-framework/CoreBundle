@@ -24,6 +24,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             'locale-js',
             'minilocale-js',
             'webtoolkit',
+            'fivekit',
             'action-js',
             'region-js',
             'formkit',
