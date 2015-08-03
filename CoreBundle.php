@@ -14,7 +14,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             'jquery-2.1',
             'jquery-ui-1.11',
             'coffeekup',
-            'font-awesome-4.2',
+            'font-awesome-4.3',
             'jquery-scrollto',
             'jquery-cookie',
             'jquery-exif',
