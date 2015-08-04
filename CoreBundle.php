@@ -8,6 +8,10 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
 {
     public function assets()
     {
+        $assetsConfig = $this->config('Assets');
+        if ($assetsConfig) {
+            return $assetsConfig->config;
+        }
         return array(
             // 'coffee-script',
             // 'jquery-1.8',
