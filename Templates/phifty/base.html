@@ -16,7 +16,7 @@ vim:filetype=htmldjango:
 
     <title>{% block title %}{{ title|default(appname) }}{% endblock %}</title>
 
-    {{ Web.include_loaded_assets('adminui') |raw}}
+    {% assets Core.assets() %}
     {% endblock %}
 
     <script>
