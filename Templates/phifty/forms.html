@@ -29,23 +29,6 @@
     {% endif %}
 {% endmacro %}
 
-{% macro textarea( name, value, rows, cols ) %}
-    <textarea class="mceEditor" name="{{ name }}" rows="{{ rows|default(10) }}" cols="{{ cols|default(40) }}">{{ value }}</textarea>
-{% endmacro %}
-
-{% macro select( name, options, selected ) %}
-    <select name="{{ name }}">
-        {% for key,name in options %}
-            {% if key is sameas(selected) %}
-                <option value="{{ key }}" selected>{{ name }}</option>
-            {% else %}
-                <option value="{{ key }}">{{ name }}</option>
-            {% endif %}
-        {% endfor %}
-    </select>
-{% endmacro %}
-
-
 {% macro field( label, type, name, value, vertical, opts ) %}
     {% if vertical %} <div class="v-field"> {% else %} <div class="field"> {% endif %}
         <div class="label">{{ label }}:</div>
