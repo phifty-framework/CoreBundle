@@ -262,10 +262,22 @@ class RegionNode
   refresh: (callback) -> @_request( @path , @args , callback )
 
   refreshWith: (args, callback) ->
-    newArgs = $.extend( {} , @args, args)
+    newArgs = $.extend({} , @args, args)
     @args = newArgs
     @saveHistory()
     @_request( @path , newArgs , callback )
+    @save()
+
+  ###
+  refreshWithout will clear the last query arguments base on the given
+  arguments
+  ###
+  refreshWithout: (args, callback) ->
+    for k,v of args
+      delete @args[k]
+    console.log(args, @args)
+    @saveHistory()
+    @_request(@path, @args, callback )
     @save()
 
   load: (path,args,callback) ->

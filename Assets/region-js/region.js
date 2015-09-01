@@ -326,6 +326,24 @@ vim:sw=2:ts=2:sts=2:et:
       return this.save();
     };
 
+
+    /*
+    refreshWithout will clear the last query arguments base on the given
+    arguments
+     */
+
+    RegionNode.prototype.refreshWithout = function(args, callback) {
+      var k, v;
+      for (k in args) {
+        v = args[k];
+        delete this.args[k];
+      }
+      console.log(args, this.args);
+      this.saveHistory();
+      this._request(this.path, this.args, callback);
+      return this.save();
+    };
+
     RegionNode.prototype.load = function(path, args, callback) {
       path || (path = this.path);
       args || (args = this.args || {});
