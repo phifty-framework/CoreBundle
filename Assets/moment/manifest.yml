@@ -1,0 +1,4 @@
+---
+collections:
+- javascripts:
+  - moment.js

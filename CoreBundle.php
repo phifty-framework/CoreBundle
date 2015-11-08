@@ -28,6 +28,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             // 'backbone-js',
             'jquery-scrollto',
             'jgrowl',
+            'moment',
             'formkit',
             'fivekit',
             'locale-js',
