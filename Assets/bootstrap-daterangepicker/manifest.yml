@@ -1,6 +1,6 @@
 ---
 collections:
-- javascripts:
+- javascript:
   - daterangepicker.js
-- stylesheets:
+- stylesheet:
   - daterangepicker.css
