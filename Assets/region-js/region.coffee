@@ -183,9 +183,14 @@ class RegionNode
     that = this
     $(Region).trigger('region.waiting', [this])
 
-    console.log("Request region, Path:" , path , "Args:" , args) if window.console
+
 
     $el = @getEl()
+
+    $(Region).trigger('region.unmount', [$el])
+
+    console.log("Request region, Path:" , path , "Args:" , args) if window.console
+
     $el.addClass('region-loading')
     offset = $el.offset()
 

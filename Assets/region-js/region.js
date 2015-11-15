@@ -222,10 +222,11 @@ vim:sw=2:ts=2:sts=2:et:
       var $el, $stage, offset, onError, onSuccess, that;
       that = this;
       $(Region).trigger('region.waiting', [this]);
+      $el = this.getEl();
+      $(Region).trigger('region.unmount', [$el]);
       if (window.console) {
         console.log("Request region, Path:", path, "Args:", args);
       }
-      $el = this.getEl();
       $el.addClass('region-loading');
       offset = $el.offset();
       $stage = this.getLoadingIndicator();
