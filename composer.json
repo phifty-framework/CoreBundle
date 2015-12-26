@@ -1,11 +1,14 @@
 {
     "name": "corneltek/corebundle",
+    "type": "phifty-bundle",
+    "require": {
+        "corneltek/installers": "dev-master"
+    },
     "authors": [
         {
             "name": "c9s",
             "email": "yoanlin93@gmail.com"
         }
     ],
-    "require": {},
     "autoload": { "psr-4":  { "CoreBundle\\": "" } }
 }
