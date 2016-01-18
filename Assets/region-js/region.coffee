@@ -212,7 +212,26 @@ class RegionNode
       else
         alert e.message
 
-    onSuccess = (html) ->
+    onSuccess = (data, textStatus, jqXHR) ->
+      if jqXHR.responseJSON
+        if data.login_required
+          if data.login_modal_url and typeof ModalManager isnt "undefined"
+            CRUDModal.open
+              "title": "登入"
+              "url": data.login_modal_url
+              "controls": [
+                {
+                  label: '登入'
+                  primary: true
+                  onClick: (e,ui) -> ui.body.find("form").submit()
+                }
+              ]
+            return
+          window.location = data.redirect if data.redirect
+        return
+
+      html = data
+      # console.log(jqXHR.getAllResponseHeaders())
       $(Region).trigger('region.finish', [this])
 
       $stage.remove()
@@ -247,19 +266,27 @@ class RegionNode
       $.ajax
         url: Region.opts.gateway
         type: Region.opts.method
-        dataType: 'html'
+        # dataType: 'html'
         data: { path: path , args: args }
         error: onError
         cache: false
         success: onSuccess
+        accepts:
+          xml: 'text/xml'
+          html: 'text/html'
+          json: 'application/json'
     else
       $.ajax
         url: path
         data: args
-        dataType: 'html'
+        # dataType: 'html'
         type: Region.opts.method
         cache: false
         error: onError
+        accepts:
+          xml: 'text/xml'
+          html: 'text/html'
+          json: 'application/json'
         success: onSuccess
 
   getEl: () -> @el

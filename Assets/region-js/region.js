@@ -246,8 +246,33 @@ vim:sw=2:ts=2:sts=2:et:
           return alert(e.message);
         }
       };
-      onSuccess = function(html) {
-        var effectClass, region;
+      onSuccess = function(data, textStatus, jqXHR) {
+        var effectClass, html, region;
+        if (jqXHR.responseJSON) {
+          if (data.login_required) {
+            if (data.login_modal_url && typeof ModalManager !== "undefined") {
+              CRUDModal.open({
+                "title": "登入",
+                "url": data.login_modal_url,
+                "controls": [
+                  {
+                    label: '登入',
+                    primary: true,
+                    onClick: function(e, ui) {
+                      return ui.body.find("form").submit();
+                    }
+                  }
+                ]
+              });
+              return;
+            }
+            if (data.redirect) {
+              window.location = data.redirect;
+            }
+          }
+          return;
+        }
+        html = data;
         $(Region).trigger('region.finish', [this]);
         $stage.remove();
         $el.removeClass('region-loading');
@@ -288,23 +313,31 @@ vim:sw=2:ts=2:sts=2:et:
         return $.ajax({
           url: Region.opts.gateway,
           type: Region.opts.method,
-          dataType: 'html',
           data: {
             path: path,
             args: args
           },
           error: onError,
           cache: false,
-          success: onSuccess
+          success: onSuccess,
+          accepts: {
+            xml: 'text/xml',
+            html: 'text/html',
+            json: 'application/json'
+          }
         });
       } else {
         return $.ajax({
           url: path,
           data: args,
-          dataType: 'html',
           type: Region.opts.method,
           cache: false,
           error: onError,
+          accepts: {
+            xml: 'text/xml',
+            html: 'text/html',
+            json: 'application/json'
+          },
           success: onSuccess
         });
       }
