@@ -117,7 +117,10 @@ class window.FiveKit.Previewer
       $imageholder.css({ width: 240, height: 120 })
 
     @cover.append $imageholder
-    Holder.run images: $imageholder.get(0)
+    if typeof Holder isnt "undefined"
+      Holder.run images: $imageholder.get(0)
+    else
+      console.warn("Holder js is not installed.")
 
   getImageDimension: () ->
     d = { }
