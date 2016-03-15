@@ -16,17 +16,23 @@ class window.FiveKit.Previewer
     @fileInput = $(@options.el)
     @fieldName = @fileInput.attr('name')
 
-    # create hidden input
+    # create a hidden input for saving the uploaded path
     @hiddenInput = @createHiddenInput(@fieldName)
 
-
+    # find the parent widget container element
     @widgetContainer = @fileInput.parents(".formkit-widget-thumbimagefile")
+
+    @widgetContainer.css({
+      position: "relative"
+    })
+
+    # find the existing image cover
     @cover = @widgetContainer.find(".formkit-image-cover")
 
     # find cover image (note that cover wrapper can be empty)
     @coverImage = @cover.find('img')
 
-    @cover.wrap('<a class="cover-preview-image" target="_blank" href="' + @coverImage.attr('src') + '"></a>')
+    # @cover.wrap('<a class="cover-preview-image" target="_blank" href="' + @coverImage.attr('src') + '"></a>')
 
     @autoresizeCheckbox = @widgetContainer.find('.autoresize-checkbox')
     @autoresizeTypeSelector = @widgetContainer.find('.autoresize-type-selector')
@@ -50,8 +56,8 @@ class window.FiveKit.Previewer
     # resize preview cover
     d = @getImageDimension()
 
-    # create dropzone
-    $dropzone = $('<div/>').addClass('image-dropzone')
+    # create a dropzone element
+    $dropzone = $('<div/>').addClass('image-dropzone').css({ position: 'absolute' })
     @cover.before $dropzone
 
     defaultDimension = { width: 240, height: 120 }
@@ -218,7 +224,17 @@ class window.FiveKit.Previewer
     return @coverImage
 
   initCoverController: () ->
-    removeButton = $('<div class="close"></div>').css('zIndex', 1000)
+    # TODO: Extract to css for this remove button
+    removeButton = $(document.createElement('div')).addClass('remove')
+      .css({
+        'zIndex': 1000
+        'position': 'absolute'
+        'top': 3
+        'right': 7
+        'color': '#ffffff'
+      })
+    removeButton.append( $('<div/>').addClass('fa fa-times-circle') )
+
     removeButton.on 'click', (e) =>
       e.stopPropagation()
 
@@ -255,5 +271,8 @@ class window.FiveKit.Previewer
 
 # combine with formkit
 FormKit.register (e, scopeEl) ->
-  $(scopeEl).find('.formkit-widget-thumbimagefile input[data-droppreview=true]').each (i, fileInput) ->
-    new FiveKit.Previewer {el : $(fileInput)}
+  $(scopeEl)
+    .find('.formkit-widget-thumbimagefile input[data-droppreview=true]')
+    .each (i, fileInput) ->
+      console.info("init previewer at ", fileInput)
+      previewer = new FiveKit.Previewer {el : $(fileInput)}

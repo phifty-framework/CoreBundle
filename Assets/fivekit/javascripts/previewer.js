@@ -22,9 +22,11 @@ Dependencies: FiveKit.Dropbox,
       this.fieldName = this.fileInput.attr('name');
       this.hiddenInput = this.createHiddenInput(this.fieldName);
       this.widgetContainer = this.fileInput.parents(".formkit-widget-thumbimagefile");
+      this.widgetContainer.css({
+        position: "relative"
+      });
       this.cover = this.widgetContainer.find(".formkit-image-cover");
       this.coverImage = this.cover.find('img');
-      this.cover.wrap('<a class="cover-preview-image" target="_blank" href="' + this.coverImage.attr('src') + '"></a>');
       this.autoresizeCheckbox = this.widgetContainer.find('.autoresize-checkbox');
       this.autoresizeTypeSelector = this.widgetContainer.find('.autoresize-type-selector');
       this.initialize();
@@ -43,7 +45,9 @@ Dependencies: FiveKit.Dropbox,
       })(this));
       this.fileInput.after(this.hiddenInput);
       d = this.getImageDimension();
-      $dropzone = $('<div/>').addClass('image-dropzone');
+      $dropzone = $('<div/>').addClass('image-dropzone').css({
+        position: 'absolute'
+      });
       this.cover.before($dropzone);
       defaultDimension = {
         width: 240,
@@ -247,7 +251,14 @@ Dependencies: FiveKit.Dropbox,
 
     Previewer.prototype.initCoverController = function() {
       var exifButton, exifData, removeButton;
-      removeButton = $('<div class="close"></div>').css('zIndex', 1000);
+      removeButton = $(document.createElement('div')).addClass('remove').css({
+        'zIndex': 1000,
+        'position': 'absolute',
+        'top': 3,
+        'right': 7,
+        'color': '#ffffff'
+      });
+      removeButton.append($('<div/>').addClass('fa fa-times-circle'));
       removeButton.on('click', (function(_this) {
         return function(e) {
           e.stopPropagation();
@@ -293,7 +304,9 @@ Dependencies: FiveKit.Dropbox,
 
   FormKit.register(function(e, scopeEl) {
     return $(scopeEl).find('.formkit-widget-thumbimagefile input[data-droppreview=true]').each(function(i, fileInput) {
-      return new FiveKit.Previewer({
+      var previewer;
+      console.info("init previewer at ", fileInput);
+      return previewer = new FiveKit.Previewer({
         el: $(fileInput)
       });
     });

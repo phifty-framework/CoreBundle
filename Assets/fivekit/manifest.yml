@@ -1,14 +1,14 @@
 ---
 collections:
 - stylesheet:
-  - fivekit.css
+  - stylesheets/fivekit.css
 - javascript:
-  - filereader.js
-  - mimebuilder.js
-  - dropbox.js
-  - xhr.js
-  - uploadprogress.js
-  - fileuploader.js
-  - dropboxuploader.js
-  - dropbox_act_connection.js
-  - previewer.js
+  - javascripts/filereader.js
+  - javascripts/mimebuilder.js
+  - javascripts/dropbox.js
+  - javascripts/xhr.js
+  - javascripts/uploadprogress.js
+  - javascripts/fileuploader.js
+  - javascripts/dropboxuploader.js
+  - javascripts/dropbox_act_connection.js
+  - javascripts/previewer.js
