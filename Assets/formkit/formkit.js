@@ -13,6 +13,9 @@ Inside Ajax Region:
 */
 var FormKit = {
     register: function(initHandler, installHandler) { 
+        if (window.console) {
+          console.debug('formkit.register');
+        }
         $(FormKit).bind('formkit.initialize',initHandler);
         if (installHandler) {
             $(this).bind('formkit.install',installHandler);
@@ -22,9 +25,15 @@ var FormKit = {
         if (!scopeEl) {
             scopeEl = document.body;
         }
-        $(FormKit).trigger('formkit.initialize',[scopeEl]);
+        if (window.console) {
+          console.debug('formkit.initialize');
+        }
+        jQuery(FormKit).trigger('formkit.initialize',[scopeEl]);
     },
     install: function() {
+        if (window.console) {
+          console.debug('formkit.install');
+        }
         $(FormKit).trigger('formkit.install');
     }
 };
