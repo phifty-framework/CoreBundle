@@ -58,6 +58,41 @@ window.FormUtils =
 
   disableInputs: (form) -> @findVisibleFields(form).attr('disabled','disabled')
 
+
+###
+
+CsrfToken manager
+
+  ActionCsrfToken.get success: (csrfToken) ->
+    ....
+
+###
+window.ActionCsrfToken =
+  requestSession: () ->
+    return jQuery.ajax
+      url: '/=/current_user/csrf'
+      error: (resp) => console.error(resp)
+  get: (config) ->
+    tokenExpired = true
+    csrfToken = this._csrfToken
+    if csrfToken
+      expiryTime = (csrfToken.timestamp + csrfToken.ttl) * 1000
+      now = new Date
+      tokenExpired = now.getTime() > expiryTime
+    if not tokenExpired
+      config.success?(csrfToken)
+    else
+      this.requestSession().success (resp) =>
+        if resp.error
+          console.error(resp.error)
+          if resp.redirect
+            window.location = resp.redirect
+        else
+          console.debug("csrfToken refreshed", resp)
+          this._csrfToken = resp
+          config.success?(resp)
+
+
 class Action
   ajaxOptions:
     dataType: 'json'
@@ -333,21 +368,6 @@ class Action
       return false if not confirm @options.confirm
 
 
-    # inject __ajax_request: 1 if there is no form element.
-    payload =
-      "__action": actionName
-      "__ajax_request": 1
-
-    tokenExpired = false
-    if Action.CsrfToken
-      csrfToken = Action.CsrfToken
-      expiryTime = (csrfToken.timestamp + csrfToken.ttl) * 1000
-      now = new Date
-      tokenExpired = now.getTime() > expiryTime
-      if not tokenExpired
-        payload._csrf_token = csrfToken.hash
-
-    payload = $.extend(payload, args)
 
     doSubmit = (payload) =>
       # if we have session, then we set the default csrf token
@@ -375,18 +395,13 @@ class Action
         console.error(e.message, e) if window.console
         alert(e.message)
 
-    if tokenExpired or not payload._csrf_token
-      Action.requestSession().success (resp) =>
-        if resp.error
-          console.error(resp.error)
-          if resp.redirect
-            window.location = resp.redirect
-        else
-          console.log("csrfToken refreshed", resp)
-          payload._csrf_token = resp.hash
-          Action.csrfToken = resp
-          doSubmit(payload)
-    else
+    ActionCsrfToken.get success: (csrfToken) =>
+      # Inject __ajax_request: 1 if there is no form element.
+      payload =
+        "__action": actionName
+        "__ajax_request": 1
+        "_csrf_token": csrfToken.hash
+      payload = $.extend(payload, args)
       doSubmit(payload)
     return false
 

@@ -40,6 +40,56 @@ USAGE
     }
   };
 
+
+  /*
+  
+  CsrfToken manager
+  
+    ActionCsrfToken.get success: (csrfToken) ->
+      ....
+   */
+
+  window.ActionCsrfToken = {
+    requestSession: function() {
+      return jQuery.ajax({
+        url: '/=/current_user/csrf',
+        error: (function(_this) {
+          return function(resp) {
+            return console.error(resp);
+          };
+        })(this)
+      });
+    },
+    get: function(config) {
+      var csrfToken, expiryTime, now, tokenExpired;
+      tokenExpired = true;
+      csrfToken = this._csrfToken;
+      if (csrfToken) {
+        expiryTime = (csrfToken.timestamp + csrfToken.ttl) * 1000;
+        now = new Date;
+        tokenExpired = now.getTime() > expiryTime;
+      }
+      if (!tokenExpired) {
+        return typeof config.success === "function" ? config.success(csrfToken) : void 0;
+      } else {
+        return this.requestSession().success((function(_this) {
+          return function(resp) {
+            if (resp.error) {
+              console.error(resp.error);
+              if (resp.redirect) {
+                return window.location = resp.redirect;
+              }
+            } else {
+              console.debug("csrfToken refreshed", resp);
+              _this._csrfToken = resp;
+              return typeof config.success === "function" ? config.success(resp) : void 0;
+            }
+          };
+        })(this));
+      }
+    }
+  };
+
   Action = (function() {
     Action.prototype.ajaxOptions = {
       dataType: 'json',
@@ -391,7 +441,7 @@ USAGE
      */
 
     Action.prototype.run = function(actionName, args, arg1, arg2) {
-      var cb, csrfToken, doSubmit, expiryTime, now, payload, tokenExpired;
+      var cb, doSubmit;
       if (typeof arg1 === "function") {
         cb = arg1;
       } else if (typeof arg1 === "object") {
@@ -405,21 +455,6 @@ USAGE
           return false;
         }
       }
-      payload = {
-        "__action": actionName,
-        "__ajax_request": 1
-      };
-      tokenExpired = false;
-      if (Action.CsrfToken) {
-        csrfToken = Action.CsrfToken;
-        expiryTime = (csrfToken.timestamp + csrfToken.ttl) * 1000;
-        now = new Date;
-        tokenExpired = now.getTime() > expiryTime;
-        if (!tokenExpired) {
-          payload._csrf_token = csrfToken.hash;
-        }
-      }
-      payload = $.extend(payload, args);
       doSubmit = (function(_this) {
         return function(payload) {
           var e, errorHandler, formEl, postUrl, successHandler;
@@ -457,25 +492,20 @@ USAGE
           }
         };
       })(this);
-      if (tokenExpired || !payload._csrf_token) {
-        Action.requestSession().success((function(_this) {
-          return function(resp) {
-            if (resp.error) {
-              console.error(resp.error);
-              if (resp.redirect) {
-                return window.location = resp.redirect;
-              }
-            } else {
-              console.log("csrfToken refreshed", resp);
-              payload._csrf_token = resp.hash;
-              Action.csrfToken = resp;
-              return doSubmit(payload);
-            }
+      ActionCsrfToken.get({
+        success: (function(_this) {
+          return function(csrfToken) {
+            var payload;
+            payload = {
+              "__action": actionName,
+              "__ajax_request": 1,
+              "_csrf_token": csrfToken.hash
+            };
+            payload = $.extend(payload, args);
+            return doSubmit(payload);
           };
-        })(this));
-      } else {
-        doSubmit(payload);
-      }
+        })(this)
+      });
       return false;
     };
 

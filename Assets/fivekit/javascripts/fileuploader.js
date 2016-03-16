@@ -13,75 +13,81 @@
 
   window.FiveKit.FileUploader = (function() {
     function FileUploader(files, options) {
-      var file, fn, i, len, ref, rs, self;
+      var self;
       this.files = files;
       this.options = options;
       self = this;
       this.queueEl = this.options.queueEl;
       this.action = this.options.action || "CoreBundle::Action::Html5Upload";
-      rs = [];
-      ref = this.files;
-      fn = (function(_this) {
-        return function(file) {
-          var progressItem, xhr;
-          if (window.console) {
-            console.log("Got dropped file ", file);
-          }
-          progressItem = new FiveKit.UploadProgressItem(file);
-          progressItem.el.appendTo(self.queueEl);
-          xhr = new FiveKit.Xhr({
-            endpoint: '/bs',
-            params: {
-              __action: self.action,
-              __ajax_request: 1
-            },
-            onReadyStateChange: function(e) {
+      ActionCsrfToken.get({
+        success: (function(_this) {
+          return function(csrfToken) {
+            var file, fn, i, len, ref, rs;
+            rs = [];
+            ref = _this.files;
+            fn = function(file) {
+              var progressItem, xhr;
               if (window.console) {
-                console.log('onReadyStateChange', e);
+                console.log("Got dropped file ", file);
               }
-              if (self.options.onReadyStateChange) {
-                return self.options.onReadyStateChange.call(this, e);
-              }
-            },
-            onTransferStart: function(e) {
-              if (window.console) {
-                console.log('onTransferStart', e);
-              }
-              if (self.options.onTransferStart) {
-                return self.options.onTransferStart.call(this, e);
-              }
-            },
-            onTransferProgress: function(e) {
-              var position, total;
-              if (window.console) {
-                console.log('onTransferProgress', e);
-              }
-              if (self.options.onTransferProgress) {
-                self.options.onTransferProgress.call(this, e);
-              }
-              if (e.lengthComputable) {
-                position = e.position || e.loaded;
-                total = e.totalSize || e.total;
-                if (window.console) {
-                  console.log('progressing', e, position, total);
+              progressItem = new FiveKit.UploadProgressItem(file);
+              progressItem.el.appendTo(self.queueEl);
+              xhr = new FiveKit.Xhr({
+                endpoint: '/bs',
+                params: {
+                  __action: self.action,
+                  __ajax_request: 1,
+                  _csrf_token: csrfToken.hash
+                },
+                onReadyStateChange: function(e) {
+                  if (window.console) {
+                    console.log('onReadyStateChange', e);
+                  }
+                  if (self.options.onReadyStateChange) {
+                    return self.options.onReadyStateChange.call(this, e);
+                  }
+                },
+                onTransferStart: function(e) {
+                  if (window.console) {
+                    console.log('onTransferStart', e);
+                  }
+                  if (self.options.onTransferStart) {
+                    return self.options.onTransferStart.call(this, e);
+                  }
+                },
+                onTransferProgress: function(e) {
+                  var position, total;
+                  if (window.console) {
+                    console.log('onTransferProgress', e);
+                  }
+                  if (self.options.onTransferProgress) {
+                    self.options.onTransferProgress.call(this, e);
+                  }
+                  if (e.lengthComputable) {
+                    position = e.position || e.loaded;
+                    total = e.totalSize || e.total;
+                    if (window.console) {
+                      console.log('progressing', e, position, total);
+                    }
+                    return progressItem.update(position, total);
+                  }
+                },
+                onTransferComplete: function(e, result) {
+                  return self.options.onTransferComplete.call(this, e, result, progressItem);
                 }
-                return progressItem.update(position, total);
-              }
-            },
-            onTransferComplete: function(e, result) {
-              return self.options.onTransferComplete.call(this, e, result, progressItem);
+              });
+              return rs.push(xhr.send(file));
+            };
+            for (i = 0, len = ref.length; i < len; i++) {
+              file = ref[i];
+              fn(file);
             }
-          });
-          return rs.push(xhr.send(file));
-        };
-      })(this);
-      for (i = 0, len = ref.length; i < len; i++) {
-        file = ref[i];
-        fn(file);
-      }
-      if (self.options.onTransferFinished) {
-        $.when.apply($, rs).done(self.options.onTransferFinished);
-      }
+            if (self.options.onTransferFinished) {
+              return $.when.apply($, rs).done(self.options.onTransferFinished);
+            }
+          };
+        })(this)
+      });
     }
 
     return FileUploader;
