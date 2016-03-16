@@ -1,52 +1,48 @@
-
 window.FiveKit = {} if typeof window.FiveKit is "undefined"
-
-# class FiveKit.FileUploader
 
 ###
 # FileUploader uploads multiple files 
 ###
-class FiveKit.BatchFileUploader
-  constructor: (@files,@options) ->
-    # progress queue container
-    self = this
-    @queueEl  = @options.queueEl
-    @action = @options.action or "CoreBundle::Action::Html5Upload"
+class FiveKit.BatchFileUploader extends FiveKit.FileUploader
 
+  uploadFile: (csrfToken, file) ->
+    self = this
+    if @progressContainer
+      progressItem = new FiveKit.UploadProgressItem(file)
+      progressItem.el.appendTo(@progressContainer)
+
+    xhr = new FiveKit.Xhr
+      endpoint: @config.endpoint
+      params: {
+        __action: @actionClass
+        __ajax_request: 1
+        __csrf_token: csrfToken.hash
+      }
+      onReadyStateChange: (e) ->
+        console.debug('onReadyStateChange',e) if window.console
+        self.config.onReadyStateChange.call(this,e) if self.config.onReadyStateChange
+
+      onTransferStart : (e) ->
+        console.debug('onTransferStart', e) if window.console
+        self.config.onTransferStart.call(this,e) if self.config.onTransferStart
+
+      onTransferProgress: (e) ->
+        console.debug('onTransferProgress',e) if window.console
+        self.config.onTransferProgress.call(this,e) if self.config.onTransferProgress
+
+        if e.lengthComputable
+          position = (e.position or e.loaded)
+          total = (e.totalSize or e.total)
+          console.log('progressing',e, position , total ) if window.console
+          progressItem.update(position, total) if progressItem
+      onTransferComplete: (e, result) ->
+        self.config.onTransferComplete.call(this, e, result, progressItem)
+    return xhr.send(file)
+
+  upload: (files) ->
     ActionCsrfToken.get success: (csrfToken) =>
       rs = []
-      for file in @files
+      for file in files
         do (file) =>
-          console.log "Got dropped file ", file if window.console
-          progressItem = new FiveKit.UploadProgressItem(file)
-          progressItem.el.appendTo(self.queueEl)
-          xhr = new FiveKit.Xhr({
-            endpoint: '/bs'
-            params: {
-              __action: self.action
-              __ajax_request: 1
-              __csrf_token: csrfToken.hash
-            }
-            onReadyStateChange: (e) ->
-              console.log('onReadyStateChange',e) if window.console
-              self.options.onReadyStateChange.call(this,e) if self.options.onReadyStateChange
-
-            onTransferStart : (e) ->
-              console.log('onTransferStart', e) if window.console
-              self.options.onTransferStart.call(this,e) if self.options.onTransferStart
-
-            onTransferProgress: (e) ->
-              console.log('onTransferProgress',e) if window.console
-              self.options.onTransferProgress.call(this,e) if self.options.onTransferProgress
-
-              if e.lengthComputable
-                position = e.position or e.loaded
-                total = e.totalSize or e.total
-                console.log('progressing',e, position , total ) if window.console
-                progressItem.update( position, total )
-
-            onTransferComplete: (e, result) ->
-              self.options.onTransferComplete.call(this, e, result, progressItem)
-          })
-          rs.push xhr.send(file)
-      $.when.apply($,rs).done( self.options.onTransferFinished ) if self.options.onTransferFinished
+          rs.push @uploadFile(csrfToken, file)
+      $.when.apply($,rs).done(@config.onTransferFinished ) if @config.onTransferFinished

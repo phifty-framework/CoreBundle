@@ -43,15 +43,16 @@ class FiveKit.DropBoxUploader
         @options.onDrop.call(this,e) if @options.onDrop
 
         if e.dataTransfer?.files
-          uploader = new FiveKit.BatchFileUploader(e.dataTransfer.files, {
+          uploader = new FiveKit.BatchFileUploader
+            endpoint: "/bs"
             action: @options.action
-            queueEl: @queueEl
+            progressContainer: @queueEl
             onReadyStateChange: @options.onReadyStateChange
             onTransferProgress: @options.onTransferProgress
             onTransferComplete: @options.onTransferComplete
             onTransferFinished: @options.onTransferFinished
             onTransferStart:    @options.onTransferStart
-          })
+          uploader.upload(e.dataTransfer.files)
         return false
     })
 
