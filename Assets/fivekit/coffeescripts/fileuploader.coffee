@@ -18,8 +18,10 @@ class window.FiveKit.FileUploader
         progressItem.el.appendTo(self.queueEl)
         xhr = new FiveKit.Xhr({
           endpoint: '/bs'
-          params: { action: self.action, __ajax_request: 1 }
-
+          params: {
+            __action: self.action
+            __ajax_request: 1
+          }
           onReadyStateChange: (e) ->
             console.log('onReadyStateChange',e) if window.console
             self.options.onReadyStateChange.call(this,e) if self.options.onReadyStateChange
@@ -37,7 +39,9 @@ class window.FiveKit.FileUploader
               total = e.totalSize or e.total
               console.log('progressing',e, position , total ) if window.console
               progressItem.update( position, total )
-          onTransferComplete: self.options.onTransferComplete
+
+          onTransferComplete: (e, result) ->
+            self.options.onTransferComplete.call(this, e, result, progressItem)
         })
         rs.push xhr.send(file)
     $.when.apply($,rs).done( self.options.onTransferFinished ) if self.options.onTransferFinished

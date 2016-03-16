@@ -9,7 +9,7 @@
       this.file = file;
       this._total = 0;
       this._loaded = 0;
-      this.el = $('<div/>').addClass('progress');
+      this.el = $('<div/>').addClass('fkit-progress');
       this.progress = $('<progress/>');
       if (!this.progress) {
         throw "progress element is not supported.";
@@ -18,10 +18,15 @@
         value: this._loaded,
         max: this._total
       }).appendTo(this.el);
-      this.percentage = $('<span/>').addClass('percentage').text(this.file.size).appendTo(this.el);
-      this.filesize = $('<span/>').addClass('filesize').text(this.prettySize(this.file.size)).appendTo(this.el);
-      this.filename = $('<span/>').addClass('filename').text(this.file.name).appendTo(this.el);
+      this.percentage = jQuery('<div/>').addClass('percentage').text(this.file.size).appendTo(this.el);
+      this.filedesc = $('<div/>').addClass('filedesc').appendTo(this.el);
+      this.filesize = $('<div/>').addClass('filesize').text(this.prettySize(this.file.size)).appendTo(this.filedesc);
+      this.filename = $('<div/>').addClass('filename').text(this.file.name).appendTo(this.filedesc);
     }
+
+    UploadProgressItem.prototype.setError = function(error) {
+      return this.filedesc.append($('<div/>').addClass('error').text(error));
+    };
 
     UploadProgressItem.prototype.calculatePercentage = function(loaded, total) {
       return parseInt((loaded / total) * 100);

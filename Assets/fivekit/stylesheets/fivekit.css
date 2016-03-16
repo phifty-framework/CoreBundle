@@ -21,40 +21,42 @@
 
 .dropbox-queue { margin: 20px; }
 
-.dropbox-queue .progress { 
+.dropbox-queue .fkit-progress { 
     margin-bottom: 5px;
     margin-left: 10px;
 }
 
-.progress > progress {
+.fkit-progress {
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 3px 5px;
+  color: #555;
+  border-radius: 3px;
+  float: left;
+}
+
+.fkit-progress > progress {
     width: 20em;
 }
 
-.progress > .percentage { 
+
+.fkit-progress > .percentage {
     display: inline-block;
     margin-left: 5px;
     font-weight: bold;
     text-shadow: 1px 1px #fff;
 }
 
-.progress > .filename { 
-    display: inline-block;
-    margin-left: 5px;
-    background: white;
-    padding: 2px 4px;
-    border-radius: 5px;
-    color: #555;
-    text-shadow: 1px 1px #DDD;
-    border: 1px solid #CCC;
+.fkit-progress > .filedesc {
+  display: block;
 }
-.progress > .filesize { 
-    display: inline-block;
-    margin-left: 5px;
-    background: white;
-    padding: 2px 4px;
-    border-radius: 5px;
-    color: #555;
-    text-shadow: 1px 1px #DDD;
-    border: 1px solid #CCC;
+
+.fkit-progress > .filedesc > .filename {
+  display: inline-block;
+  margin-right: 5px;
+}
+.fkit-progress > .filedesc > .filesize {
+  display: inline-block;
+  margin-right: 5px;
 }
 

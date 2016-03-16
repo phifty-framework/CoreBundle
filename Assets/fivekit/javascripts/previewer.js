@@ -27,6 +27,9 @@ Dependencies: FiveKit.Dropbox,
       });
       this.cover = this.widgetContainer.find(".formkit-image-cover");
       this.coverImage = this.cover.find('img');
+      this.coverImage.css({
+        zIndex: 1
+      });
       this.autoresizeCheckbox = this.widgetContainer.find('.autoresize-checkbox');
       this.autoresizeTypeSelector = this.widgetContainer.find('.autoresize-type-selector');
       this.initialize();
@@ -46,7 +49,8 @@ Dependencies: FiveKit.Dropbox,
       this.fileInput.after(this.hiddenInput);
       d = this.getImageDimension();
       $dropzone = $('<div/>').addClass('image-dropzone').css({
-        position: 'absolute'
+        position: 'absolute',
+        zIndex: 2
       });
       this.cover.before($dropzone);
       defaultDimension = {
@@ -152,35 +156,38 @@ Dependencies: FiveKit.Dropbox,
     };
 
     Previewer.prototype.initDropbox = function(dropzone) {
-      var progress;
-      progress = $('<div/>').addClass("upload-progress");
-      progress.hide().appendTo(this.widgetContainer);
-      return this.uploader = new FiveKit.DropBoxUploader({
+      var progressBarContainer, uploader;
+      progressBarContainer = $('<div/>').addClass("upload-progress clearfix").css({
+        marginTop: 5
+      });
+      progressBarContainer.hide();
+      this.widgetContainer.after(progressBarContainer);
+      return uploader = new FiveKit.DropBoxUploader({
         el: dropzone,
-        queueEl: progress,
+        queueEl: progressBarContainer,
         onDrop: (function(_this) {
           return function(e) {
             var ref;
-            progress.empty().show();
+            progressBarContainer.empty().show();
             if (((ref = e.dataTransfer.files) != null ? ref[0] : void 0)) {
               return _this.renderPreviewImage(e.dataTransfer.files[0]);
             }
           };
         })(this),
         onTransferComplete: (function(_this) {
-          return function(e, result) {
-            var ref, remotePath;
+          return function(e, result, progressItem) {
+            var ref, ref1;
             _this.use('hidden');
-            remotePath = (ref = result.data) != null ? ref.file : void 0;
-            if (result.success && remotePath) {
-              _this.renderUploadImage(remotePath);
+            if ((result.success != null) && ((ref = result.data) != null ? ref.file : void 0)) {
+              _this.renderUploadImage((ref1 = result.data) != null ? ref1.file : void 0);
+              return setTimeout((function() {
+                return progressBarContainer.fadeOut();
+              }), 2000);
             } else if (result.error) {
               _this.removeCoverImage();
               _this.insertImageHolder(_this.getImageDimension());
+              return progressItem.setError((result != null ? result.message : void 0) || "Upload Error");
             }
-            return setTimeout((function() {
-              return progress.fadeOut();
-            }), 1200);
           };
         })(this)
       });

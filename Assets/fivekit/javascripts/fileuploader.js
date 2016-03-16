@@ -32,7 +32,7 @@
           xhr = new FiveKit.Xhr({
             endpoint: '/bs',
             params: {
-              action: self.action,
+              __action: self.action,
               __ajax_request: 1
             },
             onReadyStateChange: function(e) {
@@ -68,7 +68,9 @@
                 return progressItem.update(position, total);
               }
             },
-            onTransferComplete: self.options.onTransferComplete
+            onTransferComplete: function(e, result) {
+              return self.options.onTransferComplete.call(this, e, result, progressItem);
+            }
           });
           return rs.push(xhr.send(file));
         };

@@ -31,6 +31,7 @@ class window.FiveKit.Previewer
 
     # find cover image (note that cover wrapper can be empty)
     @coverImage = @cover.find('img')
+    @coverImage.css({ zIndex: 1 })
 
     # @cover.wrap('<a class="cover-preview-image" target="_blank" href="' + @coverImage.attr('src') + '"></a>')
 
@@ -57,7 +58,10 @@ class window.FiveKit.Previewer
     d = @getImageDimension()
 
     # create a dropzone element
-    $dropzone = $('<div/>').addClass('image-dropzone').css({ position: 'absolute' })
+    $dropzone = $('<div/>').addClass('image-dropzone').css({
+      position: 'absolute'
+      zIndex: 2
+    })
     @cover.before $dropzone
 
     defaultDimension = { width: 240, height: 120 }
@@ -146,33 +150,34 @@ class window.FiveKit.Previewer
 
   initDropbox: (dropzone) ->
     # set + create DOM
-    progress = $('<div/>').addClass("upload-progress")
-    progress.hide().appendTo @widgetContainer
+    progressBarContainer = $('<div/>').addClass("upload-progress clearfix")
+      .css({ marginTop: 5 })
+    progressBarContainer.hide()
 
-    @uploader = new FiveKit.DropBoxUploader
-      el : dropzone
-      queueEl : progress
+    @widgetContainer.after(progressBarContainer)
+
+    uploader = new FiveKit.DropBoxUploader
+      el: dropzone
+      queueEl: progressBarContainer
 
       # hide the queue first
-      onDrop : (e) =>
-        progress.empty().show()
+      onDrop: (e) =>
+        progressBarContainer.empty().show()
         @renderPreviewImage(e.dataTransfer.files[0]) if ( e.dataTransfer.files?[0] )
 
       # change with the img src from server
-      onTransferComplete : (e, result) =>
+      onTransferComplete: (e, result, progressItem) =>
         @use('hidden')
 
-        remotePath = result.data?.file
-        if result.success and remotePath
-          @renderUploadImage(remotePath)
+        if result.success? and result.data?.file
+          @renderUploadImage(result.data?.file)
+          # fadeOut progress container after 1.2 second only when upload success
+          setTimeout (-> progressBarContainer.fadeOut()), 2000
         else if result.error
           @removeCoverImage()
-          @insertImageHolder( @getImageDimension() )
+          @insertImageHolder(@getImageDimension())
+          progressItem.setError(result?.message || "Upload Error")
 
-        # fadeOut progress container after 1.2 second
-        setTimeout (->
-          progress.fadeOut()
-        ), 1200
 
   # runAction use 'name' attribute to recognize the which feild is going to be sent to server,
   # so we have to make 'name' attribute unique in previewer
