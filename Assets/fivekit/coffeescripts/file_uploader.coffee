@@ -1,9 +1,12 @@
 
-window.FiveKit = {} unless window.FiveKit
+window.FiveKit = {} if typeof window.FiveKit is "undefined"
 
-class window.FiveKit.UploadQueue
+# class FiveKit.FileUploader
 
-class window.FiveKit.FileUploader
+###
+# FileUploader uploads multiple files 
+###
+class FiveKit.BatchFileUploader
   constructor: (@files,@options) ->
     # progress queue container
     self = this
@@ -22,7 +25,7 @@ class window.FiveKit.FileUploader
             params: {
               __action: self.action
               __ajax_request: 1
-              _csrf_token: csrfToken.hash
+              __csrf_token: csrfToken.hash
             }
             onReadyStateChange: (e) ->
               console.log('onReadyStateChange',e) if window.console

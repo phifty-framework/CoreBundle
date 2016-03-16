@@ -1,5 +1,4 @@
-
-### 
+###
 
 DropBox (Handle for drag, drop events)
 
@@ -12,9 +11,9 @@ DropBox (Handle for drag, drop events)
   });
 
 ###
-window.FiveKit = {} unless window.FiveKit
+window.FiveKit = {} if typeof window.FiveKit is "undefined"
 
-class window.FiveKit.DropBox
+class FiveKit.DropBox
   constructor: (@options) ->
     jQuery.event.props.push("dataTransfer")
 
@@ -25,8 +24,8 @@ class window.FiveKit.DropBox
     @el.on "dragenter", (e) ->
       # e.stopPropagation()
       # e.preventDefault()
-      $(this).addClass 'dropbox-drag-over'
-      console.log 'dropbox-drag-in' if self.options.debug and window.console
+      $(this).addClass('dropbox-drag-over')
+      console.log('dropbox-drag-in') if self.options.debug and window.console
       self.options.onDragIn.call(this,e) if self.options.onDragIn
       return false
 
@@ -35,8 +34,8 @@ class window.FiveKit.DropBox
       return false
 
     @el.on "dragleave", (e) ->
-      $(this).removeClass( 'dropbox-drag-over' )
-      console.log 'dropbox-drag-out' if self.options.debug and window.console
+      $(this).removeClass('dropbox-drag-over')
+      console.log('dropbox-drag-out') if self.options.debug and window.console
       self.options.onDragOut.call(this,e) if self.options.onDragOut
       return false
 
@@ -44,7 +43,7 @@ class window.FiveKit.DropBox
     # @el[0].addEventListener 'dragover', handlerDragOver , false
     @el.on "drop", (e) ->
       $(this).removeClass( 'dropbox-drag-over' )
-      console.log 'dropbox-drag-drop',e if self.options.debug and window.console
+      console.log('dropbox-drag-drop',e) if self.options.debug and window.console
       self.options.onDrop.call(this,e) if self.options.onDrop
       return false
 

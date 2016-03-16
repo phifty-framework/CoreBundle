@@ -39,9 +39,9 @@ Dependencies: FiveKit.Dropbox,
       var $dropzone, d, defaultDimension;
       this.fileInput.on("change", (function(_this) {
         return function(e) {
-          var ref;
+          var ref, ref1;
           _this.use("file");
-          if ((ref = e.target.files) != null ? ref[0] : void 0) {
+          if ((ref = e.target) != null ? (ref1 = ref.files) != null ? ref1[0] : void 0 : void 0) {
             return _this.renderPreviewImage(e.target.files[0]);
           }
         };
@@ -297,18 +297,6 @@ Dependencies: FiveKit.Dropbox,
       filereader = new FiveKit.FileReader({
         onLoaded: (function(_this) {
           return function(e) {
-
-            /*
-            image = new Image
-            image.onload = (imageEvent) ->
-              canvas = document.createElement('canvas')
-              max_size = 544
-              width = image.width
-              height = image.height
-              canvas.width = width
-              canvas.height = height
-            image.src = e.target.result
-             */
             _this.renderCoverImage(e.target.result);
             return _this.fileInput.hide();
           };

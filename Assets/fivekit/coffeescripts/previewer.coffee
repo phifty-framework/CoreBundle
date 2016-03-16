@@ -44,14 +44,15 @@ class window.FiveKit.Previewer
     # .formkit-widget-thumbimagefile (original)
     @fileInput.on "change", (e) =>
       @use "file"
-      @renderPreviewImage(e.target.files[0]) if e.target.files?[0]
-      # if the user select file from local, then make 'hidden' Value the same with FileInput
-      # to make sure data key-value table would get the same value
+      @renderPreviewImage(e.target.files[0]) if e.target?.files?[0]
+      # if the user select file from local, then make 'hidden' Value the same
+      # with FileInput to make sure data key-value table would get the same
+      # value
       #
       # We have C:\fakepath problem here
       # Some browsers is preventing users to get file input value from js.
       # @hiddenInput.val(    )
-    @fileInput.after( @hiddenInput )
+    @fileInput.after(@hiddenInput)
 
 
     # resize preview cover
@@ -265,21 +266,12 @@ class window.FiveKit.Previewer
 
   # use file api to render preview image before the file is uploaded.
   # @file: local file path from drop elements
+  #
+  # TODO: for local files, we need to upload first to avoid CORS issue
   renderPreviewImage : (file) ->
     # we can renderPreviewImage from input.onChange or dropzone.onDrop
     filereader = new FiveKit.FileReader
       onLoaded : (e) =>
-        ###
-        image = new Image
-        image.onload = (imageEvent) ->
-          canvas = document.createElement('canvas')
-          max_size = 544
-          width = image.width
-          height = image.height
-          canvas.width = width
-          canvas.height = height
-        image.src = e.target.result
-        ###
         @renderCoverImage(e.target.result) # base64 encoded file content
         # take off original thumbimagefile input for uploading
         @fileInput.hide()

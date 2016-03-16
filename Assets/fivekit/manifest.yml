@@ -3,12 +3,12 @@ collections:
 - stylesheet:
   - stylesheets/fivekit.css
 - javascript:
-  - javascripts/filereader.js
+  - javascripts/file_reader.js
   - javascripts/mimebuilder.js
-  - javascripts/dropbox.js
   - javascripts/xhr.js
-  - javascripts/uploadprogress.js
-  - javascripts/fileuploader.js
-  - javascripts/dropboxuploader.js
+  - javascripts/upload_progress_item.js
+  - javascripts/file_uploader.js
+  - javascripts/dropbox.js
+  - javascripts/dropbox_uploader.js
   - javascripts/dropbox_act_connection.js
   - javascripts/previewer.js

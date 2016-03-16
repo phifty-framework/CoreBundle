@@ -400,7 +400,7 @@ class Action
       payload =
         "__action": actionName
         "__ajax_request": 1
-        "_csrf_token": csrfToken.hash
+        "__csrf_token": csrfToken.hash
       payload = $.extend(payload, args)
       doSubmit(payload)
     return false

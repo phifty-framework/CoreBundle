@@ -1,5 +1,5 @@
 
-window.FiveKit = {} unless window.FiveKit
+window.FiveKit = {} if typeof window.FiveKit is "undefined"
 
 ###
 
@@ -16,7 +16,7 @@ DropBoxUploader
     onTransferProgress:
   });
 ###
-class window.FiveKit.DropBoxUploader
+class FiveKit.DropBoxUploader
   constructor: (@options) ->
 
     @dropboxEl = @options.el
@@ -43,7 +43,7 @@ class window.FiveKit.DropBoxUploader
         @options.onDrop.call(this,e) if @options.onDrop
 
         if e.dataTransfer?.files
-          uploader = new FiveKit.FileUploader(e.dataTransfer.files,{
+          uploader = new FiveKit.BatchFileUploader(e.dataTransfer.files, {
             action: @options.action
             queueEl: @queueEl
             onReadyStateChange: @options.onReadyStateChange

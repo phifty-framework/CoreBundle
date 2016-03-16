@@ -3,9 +3,9 @@
 Simple FileReader for File API.
 
 ###
-window.FiveKit = {} unless window.FiveKit
+window.FiveKit = {} if typeof window.FiveKit is "undefined"
 
-class window.FiveKit.FileReader
+class FiveKit.FileReader
   constructor: (@options) ->
     @reader = new window.FileReader
     # Firefox 3.6, WebKit (default behavior)
@@ -24,5 +24,4 @@ class window.FiveKit.FileReader
     @reader.onloadend = (e) ->
   read: (file) ->
     @reader.readAsDataURL(file)
-  isSupported: () ->
-    return typeof FileReader isnt 'undefined'
+  isSupported: () -> typeof window.FileReader isnt 'undefined'
