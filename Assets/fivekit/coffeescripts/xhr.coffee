@@ -35,13 +35,13 @@ class window.FiveKit.Xhr
     if @options.onTransferComplete
       @bind 'load', (e) ->
         target = e.srcElement or e.target
-        console.warn target.responseText if window.console
+        console.debug target.responseText if window.console
         result = JSON.parse(target.responseText)
         if window.console
           if result.error
             console.error('result',result)
           else
-            console.log('result',result)
+            console.debug('result',result)
         self.options.onTransferComplete.call(this,e,result)
         self.dfd.resolve()
     @bind('error', @options.onTransferFailed) if @options.onTransferFailed

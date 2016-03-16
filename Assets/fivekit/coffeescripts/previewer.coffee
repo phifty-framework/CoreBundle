@@ -209,7 +209,7 @@ class window.FiveKit.Previewer
       # if @coverImage.width() > d.width
       #   @coverImage.css { width: '100%', height: 'auto' }
 
-  # src: image src path
+  # src: image src path or base64 encoded content
   renderCoverImage: (src) ->
     # first cleanup existing cover image
     @removeCoverImage()
@@ -269,7 +269,18 @@ class window.FiveKit.Previewer
     # we can renderPreviewImage from input.onChange or dropzone.onDrop
     filereader = new FiveKit.FileReader
       onLoaded : (e) =>
-        @renderCoverImage( e.target.result )
+        ###
+        image = new Image
+        image.onload = (imageEvent) ->
+          canvas = document.createElement('canvas')
+          max_size = 544
+          width = image.width
+          height = image.height
+          canvas.width = width
+          canvas.height = height
+        image.src = e.target.result
+        ###
+        @renderCoverImage(e.target.result) # base64 encoded file content
         # take off original thumbimagefile input for uploading
         @fileInput.hide()
     filereader.read( file )

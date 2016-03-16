@@ -42,14 +42,14 @@
           var result, target;
           target = e.srcElement || e.target;
           if (window.console) {
-            console.warn(target.responseText);
+            console.debug(target.responseText);
           }
           result = JSON.parse(target.responseText);
           if (window.console) {
             if (result.error) {
               console.error('result', result);
             } else {
-              console.log('result', result);
+              console.debug('result', result);
             }
           }
           self.options.onTransferComplete.call(this, e, result);

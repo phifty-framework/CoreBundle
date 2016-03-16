@@ -297,6 +297,18 @@ Dependencies: FiveKit.Dropbox,
       filereader = new FiveKit.FileReader({
         onLoaded: (function(_this) {
           return function(e) {
+
+            /*
+            image = new Image
+            image.onload = (imageEvent) ->
+              canvas = document.createElement('canvas')
+              max_size = 544
+              width = image.width
+              height = image.height
+              canvas.width = width
+              canvas.height = height
+            image.src = e.target.result
+             */
             _this.renderCoverImage(e.target.result);
             return _this.fileInput.hide();
           };
