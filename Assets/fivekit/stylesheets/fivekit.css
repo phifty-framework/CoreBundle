@@ -1,4 +1,6 @@
-
+/*
+vim:filetype=css:sw=2:ts=2:sts=2:
+*/
 .dropbox {
     border: 1px solid #ccc;
     border-radius: 15px;
@@ -8,8 +10,12 @@
 }
 
 .dropbox.dropbox-drag-over {
-    border: 1px solid #8b3;
-    background: #cf6;
+  border: 1px solid #8b3;
+  background: #cf6;
+}
+
+.image-dropzone.dropbox-drag-over {
+  background: #cf6;
 }
 
 .dropbox-hint {
