@@ -364,7 +364,7 @@ USAGE
             options.onError.apply(self, [resp]);
           }
           if (window.console) {
-            console.error(resp.message);
+            console.error(resp.message, resp);
           } else {
             alert(resp.message);
           }
@@ -441,7 +441,7 @@ USAGE
      */
 
     Action.prototype.run = function(actionName, args, arg1, arg2) {
-      var cb, doSubmit;
+      var cb, doSubmit, payload;
       if (typeof arg1 === "function") {
         cb = arg1;
       } else if (typeof arg1 === "object") {
@@ -492,16 +492,19 @@ USAGE
           }
         };
       })(this);
+      payload = {
+        "__action": actionName,
+        "__ajax_request": 1
+      };
+      payload = $.extend(payload, args);
+      if (payload.__csrf_token) {
+        doSubmit(payload);
+        return false;
+      }
       ActionCsrfToken.get({
         success: (function(_this) {
           return function(csrfToken) {
-            var payload;
-            payload = {
-              "__action": actionName,
-              "__ajax_request": 1,
-              "_csrf_token": csrfToken.hash
-            };
-            payload = $.extend(payload, args);
+            payload.__csrf_token = csrfToken.hash;
             return doSubmit(payload);
           };
         })(this)

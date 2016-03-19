@@ -7,35 +7,6 @@
     window.FiveKit = {};
   }
 
-  FiveKit.FileUploader = (function() {
-    FileUploader.prototype.actionClass = "CoreBundle::Action::Html5Upload";
-
-    function FileUploader(config) {
-      this.config = config;
-      if (this.config.action) {
-        this.actionClass = this.config.action;
-      }
-      this.progressContainer = this.config.progressContainer;
-    }
-
-    FileUploader.prototype.upload = function(file) {
-      return ActionCsrfToken.get({
-        success: (function(_this) {
-          return function(csrfToken) {
-            var rs;
-            rs = _this.uploadFile(csrfToken, file);
-            if (_this.config.onTransferFinished) {
-              return $.when.apply($, [rs]).done(_this.config.onTransferFinished);
-            }
-          };
-        })(this)
-      });
-    };
-
-    return FileUploader;
-
-  })();
-
 
   /*
    * FileUploader uploads multiple files
@@ -47,62 +18,6 @@
     function BatchFileUploader() {
       return BatchFileUploader.__super__.constructor.apply(this, arguments);
     }
-
-    BatchFileUploader.prototype.uploadFile = function(csrfToken, file) {
-      var progressItem, self, xhr;
-      self = this;
-      if (this.progressContainer) {
-        progressItem = new FiveKit.UploadProgressItem(file);
-        progressItem.el.appendTo(this.progressContainer);
-      }
-      xhr = new FiveKit.Xhr({
-        endpoint: this.config.endpoint,
-        params: {
-          __action: this.actionClass,
-          __ajax_request: 1,
-          __csrf_token: csrfToken.hash
-        },
-        onReadyStateChange: function(e) {
-          if (window.console) {
-            console.debug('onReadyStateChange', e);
-          }
-          if (self.config.onReadyStateChange) {
-            return self.config.onReadyStateChange.call(this, e);
-          }
-        },
-        onTransferStart: function(e) {
-          if (window.console) {
-            console.debug('onTransferStart', e);
-          }
-          if (self.config.onTransferStart) {
-            return self.config.onTransferStart.call(this, e);
-          }
-        },
-        onTransferProgress: function(e) {
-          var position, total;
-          if (window.console) {
-            console.debug('onTransferProgress', e);
-          }
-          if (self.config.onTransferProgress) {
-            self.config.onTransferProgress.call(this, e);
-          }
-          if (e.lengthComputable) {
-            position = e.position || e.loaded;
-            total = e.totalSize || e.total;
-            if (window.console) {
-              console.log('progressing', e, position, total);
-            }
-            if (progressItem) {
-              return progressItem.update(position, total);
-            }
-          }
-        },
-        onTransferComplete: function(e, result) {
-          return self.config.onTransferComplete.call(this, e, result, progressItem);
-        }
-      });
-      return xhr.send(file);
-    };
 
     BatchFileUploader.prototype.upload = function(files) {
       return ActionCsrfToken.get({

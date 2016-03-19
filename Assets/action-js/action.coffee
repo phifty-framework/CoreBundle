@@ -297,7 +297,7 @@ class Action
       else if resp.error
         options.onError.apply(self,[resp]) if options.onError
 
-        if window.console then console.error( resp.message )
+        if window.console then console.error(resp.message, resp)
         else alert resp.message
       else
         throw "Unknown error:" + resp
@@ -395,13 +395,19 @@ class Action
         console.error(e.message, e) if window.console
         alert(e.message)
 
+    # Inject __ajax_request: 1 if there is no form element.
+    payload =
+      "__action": actionName
+      "__ajax_request": 1
+    payload = $.extend(payload, args)
+
+    if payload.__csrf_token
+      doSubmit(payload)
+      return false
+
     ActionCsrfToken.get success: (csrfToken) =>
       # Inject __ajax_request: 1 if there is no form element.
-      payload =
-        "__action": actionName
-        "__ajax_request": 1
-        "__csrf_token": csrfToken.hash
-      payload = $.extend(payload, args)
+      payload.__csrf_token = csrfToken.hash
       doSubmit(payload)
     return false
 

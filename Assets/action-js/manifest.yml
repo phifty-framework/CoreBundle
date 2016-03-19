@@ -11,3 +11,4 @@ collections:
     - action-highlight.js
     - action-bootstrap-highlight.js
     - action-loader.js
+    watch: 'coffee -w -c *.coffee'
