@@ -15,7 +15,8 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
         return array(
             // 'coffee-script',
             // 'jquery-1.8',
-            'jquery-2.1',
+            // 'jquery-2.1',
+            'jquery-2.2',
             'moment',
             'jquery-ui-1.11',
             'coffeekup',
