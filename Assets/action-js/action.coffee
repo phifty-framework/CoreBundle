@@ -177,38 +177,34 @@ class Action
 
     FormUtils.findFields(f).each (i,n) ->
       el = $(n)
-      val = $(n).val()
       name = el.attr('name')
       return if not name
 
-      if val and ( typeof val == "object" or typeof val == "array" )
+      val = el.val()
+
+      if val instanceof Array
         data[name] = val
         return
 
-      if isIndexed( name )
+      if isIndexed(name)
         data[name] ||= []
 
         # for checkbox(s), get their values.
-      if el.attr('type') == "checkbox"
-        if el.is(':checked')
-          if isIndexed( name )
-            data[name].push( val )
-          else
-            data[name] = val
-      else if el.attr('type') == "radio"
+      if el.attr('type') is "checkbox" or el.attr('type') is "radio"
         if el.is(':checked')
           if isIndexed( name )
             data[name].push( val )
           else
             data[name] = val
         else if not data[name]
-          data[ name ] = null
+          data[name] = null
       else
         # if it's name is an array
-        if isIndexed( name )
-          data[name].push( val )
+        if isIndexed(name)
+          data[name].push(val)
         else
           data[name] = val
+      return
     return data
 
   # hook handler on form element.

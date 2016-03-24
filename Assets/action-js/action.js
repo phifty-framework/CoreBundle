@@ -210,41 +210,33 @@ USAGE
       FormUtils.findFields(f).each(function(i, n) {
         var el, name, val;
         el = $(n);
-        val = $(n).val();
         name = el.attr('name');
         if (!name) {
           return;
         }
-        if (val && (typeof val === "object" || typeof val === "array")) {
+        val = el.val();
+        if (val instanceof Array) {
           data[name] = val;
           return;
         }
         if (isIndexed(name)) {
           data[name] || (data[name] = []);
         }
-        if (el.attr('type') === "checkbox") {
+        if (el.attr('type') === "checkbox" || el.attr('type') === "radio") {
           if (el.is(':checked')) {
             if (isIndexed(name)) {
-              return data[name].push(val);
+              data[name].push(val);
             } else {
-              return data[name] = val;
-            }
-          }
-        } else if (el.attr('type') === "radio") {
-          if (el.is(':checked')) {
-            if (isIndexed(name)) {
-              return data[name].push(val);
-            } else {
-              return data[name] = val;
+              data[name] = val;
             }
           } else if (!data[name]) {
-            return data[name] = null;
+            data[name] = null;
           }
         } else {
           if (isIndexed(name)) {
-            return data[name].push(val);
+            data[name].push(val);
           } else {
-            return data[name] = val;
+            data[name] = val;
           }
         }
       });
