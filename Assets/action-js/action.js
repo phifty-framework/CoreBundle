@@ -264,9 +264,12 @@ USAGE
     Action.prototype._processFormOptions = function(options, resp) {
       if (options.clear) {
         FormUtils.findTextFields(this.form()).each(function(i, e) {
-          if ($(this).attr('name') !== "action") {
-            return $(this).val("");
+          var n;
+          n = $(this).attr('name');
+          if (n === "action" || n === "__action" || n === "__csrf_token" || n === "__ajax_request") {
+            return;
           }
+          return $(this).val("");
         });
       }
       if (resp.success && options.fadeOut) {

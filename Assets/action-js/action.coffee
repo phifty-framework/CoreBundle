@@ -226,7 +226,9 @@ class Action
     if options.clear
       # it's not action name field, clear it.
       FormUtils.findTextFields(@form()).each (i,e) ->
-        $(this).val("") if $(this).attr('name') != "action"
+        n = $(this).attr('name')
+        return if n is "action" or n is "__action" or n is "__csrf_token" or n is "__ajax_request"
+        $(this).val("")
     if resp.success and options.fadeOut
       @form().fadeOut('slow')
 
