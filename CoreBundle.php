@@ -13,6 +13,7 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             return $assetsConfig->config;
         }
         return array(
+            'js-cookie',
             // 'coffee-script',
             // 'jquery-1.8',
             // 'jquery-2.1',
