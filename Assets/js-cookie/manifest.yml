@@ -1,0 +1,4 @@
+---
+collections:
+- javascript:
+  - js.cookie.js
