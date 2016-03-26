@@ -282,5 +282,4 @@ FormKit.register (e, scopeEl) ->
   $(scopeEl)
     .find('.formkit-widget-thumbimagefile input[data-droppreview=true]')
     .each (i, fileInput) ->
-      console.info("init previewer at ", fileInput)
       previewer = new FiveKit.Previewer {el : $(fileInput)}
