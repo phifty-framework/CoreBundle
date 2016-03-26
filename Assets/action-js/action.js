@@ -133,43 +133,47 @@ USAGE
       })(this));
     }
 
+    Action.prototype.setForm = function(f) {
+      this.formEl = $(f);
+      this.formEl.attr('method', 'post');
+      this.formEl.attr("enctype", "multipart/form-data");
+      this.formEl.data("actionObject", this);
+      this.actionName = this.formEl.find('input[name=__action]').val();
+      if (!this.formEl.get(0)) {
+        alert("Action form element not found");
+      }
+      if (!this.actionName) {
+        alert("Action name is undefined.");
+      }
+      if (!this.formEl.find('input[name="__ajax_request"]').get(0)) {
+        this.formEl.append($('<input>').attr({
+          type: "hidden",
+          name: "__ajax_request",
+          value: 1
+        }));
+      }
+      return this.formEl.submit((function(_this) {
+        return function() {
+          var e, ret;
+          try {
+            ret = _this.submit();
+            if (ret) {
+              return ret;
+            }
+          } catch (_error) {
+            e = _error;
+            if (window.console) {
+              console.error(e.message, e);
+            }
+          }
+          return false;
+        };
+      })(this));
+    };
+
     Action.prototype.form = function(f) {
       if (f) {
-        this.formEl = $(f);
-        this.formEl.attr('method', 'post');
-        this.formEl.attr("enctype", "multipart/form-data");
-        this.formEl.data("actionObject", this);
-        this.actionName = this.formEl.find('input[name=__action]').val();
-        if (!this.formEl.get(0)) {
-          alert("Action form element not found");
-        }
-        if (!this.actionName) {
-          alert("Action name is undefined.");
-        }
-        if (!this.formEl.find('input[name="__ajax_request"]').get(0)) {
-          this.formEl.append($('<input>').attr({
-            type: "hidden",
-            name: "__ajax_request",
-            value: 1
-          }));
-        }
-        this.formEl.submit((function(_this) {
-          return function() {
-            var e, ret;
-            try {
-              ret = _this.submit();
-              if (ret) {
-                return ret;
-              }
-            } catch (_error) {
-              e = _error;
-              if (window.console) {
-                console.error(e.message, e);
-              }
-            }
-            return false;
-          };
-        })(this));
+        this.setForm(f);
       }
       return this.formEl;
     };

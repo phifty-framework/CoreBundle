@@ -120,33 +120,36 @@ class Action
     # init plugins
     $(Action._globalPlugins).each (i,e) => @plug e.plugin, e.options
 
+  setForm: (f) ->
+    @formEl = $(f)
+    @formEl.attr('method','post')
+    # auto setup enctype for uploading file.
+    @formEl.attr("enctype", "multipart/form-data")
+    @formEl.data("actionObject", this)
+    @actionName = @formEl.find('input[name=__action]').val()
+
+    alert "Action form element not found" if not @formEl.get(0)
+    alert "Action name is undefined." if not @actionName
+
+    # pass __ajax_request param for ajax action request.
+    if not @formEl.find('input[name="__ajax_request"]').get(0)
+      @formEl.append $('<input>').attr
+        type:"hidden"
+        name:"__ajax_request"
+        value: 1
+    @formEl.submit =>
+      # run Action.submit method()
+      try
+        # dispatch toAction.submit method
+        ret = @submit()
+        return ret if ret
+      catch e
+        console.error e.message,e if window.console
+      return false
+
   form: (f) ->
     if f
-      @formEl = $(f)
-      @formEl.attr('method','post')
-      # auto setup enctype for uploading file.
-      @formEl.attr("enctype", "multipart/form-data")
-      @formEl.data("actionObject", this)
-      @actionName = @formEl.find('input[name=__action]').val()
-
-      alert "Action form element not found" if not @formEl.get(0)
-      alert "Action name is undefined." if not @actionName
-
-      # pass __ajax_request param for ajax action request.
-      if not @formEl.find('input[name="__ajax_request"]').get(0)
-        @formEl.append $('<input>').attr
-          type:"hidden"
-          name:"__ajax_request"
-          value: 1
-      @formEl.submit =>
-        # run Action.submit method()
-        try
-          # dispatch toAction.submit method
-          ret = @submit()
-          return ret if ret
-        catch e
-          console.error e.message,e if window.console
-        return false
+      @setForm(f)
     return @formEl
 
   log: -> console.log.apply(console, arguments) if window.console and window.console.log and console.log.apply
