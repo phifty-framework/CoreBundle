@@ -59,6 +59,17 @@ window.FormUtils =
   disableInputs: (form) -> @findVisibleFields(form).attr('disabled','disabled')
 
 
+
+###
+# ActionDevLoader.update()
+###
+window.ActionDevLoader =
+  update: () ->
+    el = document.createElement("script")
+    el.setAttribute("type","text/javascript")
+    el.setAttribute("src", "/assets/action-js/action.js?_=" + (new Date).getTime())
+    document.getElementsByTagName("head")[0].appendChild(el)
+
 ###
 
 CsrfToken manager
@@ -84,7 +95,7 @@ window.ActionCsrfToken =
     else
       this.requestSession().success (resp) =>
         if resp.error
-          console.error(resp.error)
+          console.error("requestSession error",resp.error)
           if resp.redirect
             window.location = resp.redirect
         else
@@ -128,8 +139,8 @@ class Action
     @formEl.data("actionObject", this)
     @actionName = @formEl.find('input[name=__action]').val()
 
-    alert "Action form element not found" if not @formEl.get(0)
-    alert "Action name is undefined." if not @actionName
+    console.error "Action form element not found" if not @formEl.get(0)
+    cosnole.error "Action name is undefined." if not @actionName
 
     # pass __ajax_request param for ajax action request.
     if not @formEl.find('input[name="__ajax_request"]').get(0)
@@ -144,7 +155,7 @@ class Action
         ret = @submit()
         return ret if ret
       catch e
-        console.error e.message,e if window.console
+        console.error("Form submit error",e.message,e) if window.console
       return false
 
   form: (f) ->
@@ -245,7 +256,7 @@ class Action
       setTimeout (-> window.location = resp.redirect), resp.delay * 1000 || options.delay || 0
 
   _processRegionOptions: (options,resp) ->
-    throw "Region is undefined." unless Region
+    throw "Region is undefined." unless typeof Region is "undefined"
 
     # if form exists, region options should based on the region of form.
     form = @form()
@@ -272,7 +283,13 @@ class Action
 
   # return a success result handler:
   #   (resp) -> code
-  _createSuccessHandler: (formEl,options,cb ) ->
+  #
+  # @param {DOMElement} formEl
+  # @param {object} options
+  # @param {Function} cb
+  # @param {Function} retrycb
+  #
+  _createSuccessHandler: (formEl,options,cb,retrycb) ->
     # which is an Action object.
     self = this
     $self = $(self)
@@ -296,22 +313,34 @@ class Action
         self._processElementOptions options,resp
         self._processLocationOptions options, resp
       else if resp.error
-        options.onError.apply(self,[resp]) if options.onError
 
-        if window.console then console.error(resp.message, resp)
-        else alert resp.message
+        console.log(resp)
+        if resp.csrf_token_mismatch or resp.csrf_token_expired or resp.csrf_token_invalid
+          console.error("csrf token mismatched")
+
+        options.onError.apply(self,[resp]) if options.onError
+        if window.console
+          console.error("Returned error", resp.message, resp)
+          if resp.trace
+            debugDiv = document.createElement('div')
+            debugDiv.innerHTML = resp.trace
+            console.debug(debugDiv.textContent)
+        else
+          alert resp.message
       else
         throw "Unknown error:" + resp
       return true
 
   _createErrorHandler: (formEl, options) ->
     return (error, t, m) =>
-    if error.responseText
-      if window.console then console.error error.responseText
-      else alert error.responseText
-    else
-      console.error error
-    FormUtils.enableInputs(formEl) if formEl and options.disableInput
+      if error.responseText
+        if window.console
+          console.error error.responseText
+        else
+          alert error.responseText
+      else
+        console.error error
+      FormUtils.enableInputs(formEl) if formEl and options.disableInput
 
   ### 
 
@@ -370,31 +399,28 @@ class Action
 
 
 
+    # doSubmit will retunr jQuery.Promise object
+    # @return {jQuery.Promise}
     doSubmit = (payload) =>
       # if we have session, then we set the default csrf token
       # an user may override the csrf token from web form
-      try
-        @options.onSubmit() if @options.onSubmit
-        formEl = @form()
-        if formEl
-          # if we have form, disable these inputs
-          FormUtils.disableInputs(formEl) if @options.disableInput
-        postUrl = window.location.pathname
-        if formEl and formEl.attr('action')
-          postUrl = formEl.attr('action')
-        else if @actionPath
-          postUrl = @actionPath
-        errorHandler = @_createErrorHandler( formEl, @options )
-        successHandler = @_createSuccessHandler( formEl, @options, cb )
-        jQuery.ajax $.extend @ajaxOptions,
-          "url": postUrl
-          "data": payload
-          "error": errorHandler
-          "success": successHandler
-        return false
-      catch e
-        console.error(e.message, e) if window.console
-        alert(e.message)
+      @options.onSubmit() if @options.onSubmit
+      formEl = @form()
+      if formEl
+        # if we have form, disable these inputs
+        FormUtils.disableInputs(formEl) if @options.disableInput
+      postUrl = window.location.pathname
+      if formEl and formEl.attr('action')
+        postUrl = formEl.attr('action')
+      else if @actionPath
+        postUrl = @actionPath
+      errorHandler = @_createErrorHandler(formEl, @options)
+      successHandler = @_createSuccessHandler(formEl, @options, cb)
+      return jQuery.ajax $.extend @ajaxOptions,
+        "url": postUrl
+        "data": payload
+        "error": errorHandler
+        "success": successHandler
 
     # Inject __ajax_request: 1 if there is no form element.
     payload =
@@ -404,12 +430,16 @@ class Action
 
     if payload.__csrf_token
       doSubmit(payload)
+        .fail((a) -> console.log('fail',a))
+        .done((a) -> console.log('done',a))
       return false
 
     ActionCsrfToken.get success: (csrfToken) =>
       # Inject __ajax_request: 1 if there is no form element.
       payload.__csrf_token = csrfToken.hash
       doSubmit(payload)
+        .fail((a) -> console.log('fail',a))
+        .done((a) -> console.log('done',a))
     return false
 
   ###
@@ -454,8 +484,8 @@ class Action
   submitWithAIM: (data,cb) ->
     $form = @form()
     # use $form, data, options, cb
-    successHandler = @_createSuccessHandler( $form, @options, cb)
-    errorHandler = @_createErrorHandler( $form, @options )
+    successHandler = @_createSuccessHandler($form, @options, cb)
+    errorHandler = @_createErrorHandler($form, @options)
     @options.beforeUpload.call( this, $form, data ) if @options.beforeUpload
 
     throw "form element not found." if not $form or not $form.get(0)
@@ -503,17 +533,6 @@ class Action
 
 
 Action._globalPlugins = [ ]
-
-###
-
-requestSession returns promise object.
-
-###
-Action.requestSession = () ->
-  jQuery.ajax
-    url: '/=/current_user/csrf'
-    error: (resp) => console.error(resp)
-    # success: (resp) => console.log(resp)
 
 Action.form = (formsel,opts) -> new Action(formsel,opts || {})
 

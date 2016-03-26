@@ -42,6 +42,21 @@ USAGE
 
 
   /*
+   * ActionDevLoader.update()
+   */
+
+  window.ActionDevLoader = {
+    update: function() {
+      var el;
+      el = document.createElement("script");
+      el.setAttribute("type", "text/javascript");
+      el.setAttribute("src", "/assets/action-js/action.js?_=" + (new Date).getTime());
+      return document.getElementsByTagName("head")[0].appendChild(el);
+    }
+  };
+
+
+  /*
   
   CsrfToken manager
   
@@ -75,7 +90,7 @@ USAGE
         return this.requestSession().success((function(_this) {
           return function(resp) {
             if (resp.error) {
-              console.error(resp.error);
+              console.error("requestSession error", resp.error);
               if (resp.redirect) {
                 return window.location = resp.redirect;
               }
@@ -140,10 +155,10 @@ USAGE
       this.formEl.data("actionObject", this);
       this.actionName = this.formEl.find('input[name=__action]').val();
       if (!this.formEl.get(0)) {
-        alert("Action form element not found");
+        console.error("Action form element not found");
       }
       if (!this.actionName) {
-        alert("Action name is undefined.");
+        cosnole.error("Action name is undefined.");
       }
       if (!this.formEl.find('input[name="__ajax_request"]').get(0)) {
         this.formEl.append($('<input>').attr({
@@ -163,7 +178,7 @@ USAGE
           } catch (_error) {
             e = _error;
             if (window.console) {
-              console.error(e.message, e);
+              console.error("Form submit error", e.message, e);
             }
           }
           return false;
@@ -299,7 +314,7 @@ USAGE
 
     Action.prototype._processRegionOptions = function(options, resp) {
       var form, reg, regionKeys;
-      if (!Region) {
+      if (typeof Region !== "undefined") {
         throw "Region is undefined.";
       }
       form = this.form();
@@ -334,12 +349,12 @@ USAGE
       }
     };
 
-    Action.prototype._createSuccessHandler = function(formEl, options, cb) {
+    Action.prototype._createSuccessHandler = function(formEl, options, cb, retrycb) {
       var $self, self;
       self = this;
       $self = $(self);
       return function(resp) {
-        var ret;
+        var debugDiv, ret;
         $self.trigger('action.on_result', [resp]);
         if (formEl && options.disableInput) {
           FormUtils.enableInputs(formEl);
@@ -359,11 +374,20 @@ USAGE
           self._processElementOptions(options, resp);
           self._processLocationOptions(options, resp);
         } else if (resp.error) {
+          console.log(resp);
+          if (resp.csrf_token_mismatch || resp.csrf_token_expired || resp.csrf_token_invalid) {
+            console.error("csrf token mismatched");
+          }
           if (options.onError) {
             options.onError.apply(self, [resp]);
           }
           if (window.console) {
-            console.error(resp.message, resp);
+            console.error("Returned error", resp.message, resp);
+            if (resp.trace) {
+              debugDiv = document.createElement('div');
+              debugDiv.innerHTML = resp.trace;
+              console.debug(debugDiv.textContent);
+            }
           } else {
             alert(resp.message);
           }
@@ -376,20 +400,21 @@ USAGE
 
     Action.prototype._createErrorHandler = function(formEl, options) {
       return (function(_this) {
-        return function(error, t, m) {};
+        return function(error, t, m) {
+          if (error.responseText) {
+            if (window.console) {
+              console.error(error.responseText);
+            } else {
+              alert(error.responseText);
+            }
+          } else {
+            console.error(error);
+          }
+          if (formEl && options.disableInput) {
+            return FormUtils.enableInputs(formEl);
+          }
+        };
       })(this);
-      if (error.responseText) {
-        if (window.console) {
-          console.error(error.responseText);
-        } else {
-          alert(error.responseText);
-        }
-      } else {
-        console.error(error);
-      }
-      if (formEl && options.disableInput) {
-        return FormUtils.enableInputs(formEl);
-      }
     };
 
 
@@ -456,39 +481,30 @@ USAGE
       }
       doSubmit = (function(_this) {
         return function(payload) {
-          var e, errorHandler, formEl, postUrl, successHandler;
-          try {
-            if (_this.options.onSubmit) {
-              _this.options.onSubmit();
-            }
-            formEl = _this.form();
-            if (formEl) {
-              if (_this.options.disableInput) {
-                FormUtils.disableInputs(formEl);
-              }
-            }
-            postUrl = window.location.pathname;
-            if (formEl && formEl.attr('action')) {
-              postUrl = formEl.attr('action');
-            } else if (_this.actionPath) {
-              postUrl = _this.actionPath;
-            }
-            errorHandler = _this._createErrorHandler(formEl, _this.options);
-            successHandler = _this._createSuccessHandler(formEl, _this.options, cb);
-            jQuery.ajax($.extend(_this.ajaxOptions, {
-              "url": postUrl,
-              "data": payload,
-              "error": errorHandler,
-              "success": successHandler
-            }));
-            return false;
-          } catch (_error) {
-            e = _error;
-            if (window.console) {
-              console.error(e.message, e);
-            }
-            return alert(e.message);
+          var errorHandler, formEl, postUrl, successHandler;
+          if (_this.options.onSubmit) {
+            _this.options.onSubmit();
           }
+          formEl = _this.form();
+          if (formEl) {
+            if (_this.options.disableInput) {
+              FormUtils.disableInputs(formEl);
+            }
+          }
+          postUrl = window.location.pathname;
+          if (formEl && formEl.attr('action')) {
+            postUrl = formEl.attr('action');
+          } else if (_this.actionPath) {
+            postUrl = _this.actionPath;
+          }
+          errorHandler = _this._createErrorHandler(formEl, _this.options);
+          successHandler = _this._createSuccessHandler(formEl, _this.options, cb);
+          return jQuery.ajax($.extend(_this.ajaxOptions, {
+            "url": postUrl,
+            "data": payload,
+            "error": errorHandler,
+            "success": successHandler
+          }));
         };
       })(this);
       payload = {
@@ -497,14 +513,22 @@ USAGE
       };
       payload = $.extend(payload, args);
       if (payload.__csrf_token) {
-        doSubmit(payload);
+        doSubmit(payload).fail(function(a) {
+          return console.log('fail', a);
+        }).done(function(a) {
+          return console.log('done', a);
+        });
         return false;
       }
       ActionCsrfToken.get({
         success: (function(_this) {
           return function(csrfToken) {
             payload.__csrf_token = csrfToken.hash;
-            return doSubmit(payload);
+            return doSubmit(payload).fail(function(a) {
+              return console.log('fail', a);
+            }).done(function(a) {
+              return console.log('done', a);
+            });
           };
         })(this)
       });
@@ -614,23 +638,6 @@ USAGE
   })();
 
   Action._globalPlugins = [];
-
-
-  /*
-  
-  requestSession returns promise object.
-   */
-
-  Action.requestSession = function() {
-    return jQuery.ajax({
-      url: '/=/current_user/csrf',
-      error: (function(_this) {
-        return function(resp) {
-          return console.error(resp);
-        };
-      })(this)
-    });
-  };
 
   Action.form = function(formsel, opts) {
     return new Action(formsel, opts || {});

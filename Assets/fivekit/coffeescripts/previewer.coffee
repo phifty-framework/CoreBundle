@@ -44,14 +44,28 @@ class window.FiveKit.Previewer
     # .formkit-widget-thumbimagefile (original)
     @fileInput.on "change", (e) =>
       @use "file"
-      @renderPreviewImage(e.target.files[0]) if e.target?.files?[0]
+      # console.debug("File selected",e.target.files[0], e)
+      fileUploader = new FiveKit.FileUploader
+        endpoint: "/bs"
+        action: @options.action
+        onTransferComplete: (e, result) -> console.log("onTransferComplete", e, result)
+
+      # @param {XMLHttpRequestProgressEvent} e xhr progress event
+      # @param {object} result the returned data of the uploaded file.
+      fileUploader.upload(e.target.files[0]).done (e,result) =>
+        @renderPreviewImage(result.data.file) if result.data?.file
+
+
       # if the user select file from local, then make 'hidden' Value the same
       # with FileInput to make sure data key-value table would get the same
       # value
       #
       # We have C:\fakepath problem here
       # Some browsers is preventing users to get file input value from js.
+      #
+      # @renderPreviewImage(e.target.files[0]) if e.target?.files?[0]
       # @hiddenInput.val(    )
+
     @fileInput.after(@hiddenInput)
 
 
@@ -165,6 +179,7 @@ class window.FiveKit.Previewer
       onDrop: (e) =>
         progressBarContainer.empty().show()
         @renderPreviewImage(e.dataTransfer.files[0]) if ( e.dataTransfer.files?[0] )
+        @fileInput.hide()
 
       # change with the img src from server
       onTransferComplete: (e, result, progressItem) =>
@@ -269,13 +284,16 @@ class window.FiveKit.Previewer
   #
   # TODO: for local files, we need to upload first to avoid CORS issue
   renderPreviewImage : (file) ->
-    # we can renderPreviewImage from input.onChange or dropzone.onDrop
-    filereader = new FiveKit.FileReader
-      onLoaded : (e) =>
-        @renderCoverImage(e.target.result) # base64 encoded file content
-        # take off original thumbimagefile input for uploading
-        @fileInput.hide()
-    filereader.read( file )
+    if file instanceof File
+      # we can renderPreviewImage from input.onChange or dropzone.onDrop
+      filereader = new FiveKit.FileReader
+        onLoaded : (e) =>
+          @renderCoverImage(e.target.result) # base64 encoded file content
+          # take off original thumbimagefile input for uploading
+      filereader.read(file)
+    else if typeof file is "string"
+      @renderCoverImage("/" + file) # base64 encoded file content
+      # @fileInput.hide()
 
 # combine with formkit
 FormKit.register (e, scopeEl) ->

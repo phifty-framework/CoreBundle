@@ -20,6 +20,8 @@
     }
 
     BatchFileUploader.prototype.upload = function(files) {
+      var defer;
+      defer = $.Deferred();
       return ActionCsrfToken.get({
         success: (function(_this) {
           return function(csrfToken) {

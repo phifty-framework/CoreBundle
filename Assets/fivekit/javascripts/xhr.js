@@ -16,7 +16,6 @@
 
   window.FiveKit.Xhr = (function() {
     function Xhr(options) {
-      var self;
       this.options = options;
       if (this.options.params) {
         this.query = $.param(this.options.params);
@@ -25,6 +24,10 @@
       } else if (this.options.query) {
         this.query = this.options.query;
       }
+    }
+
+    Xhr.prototype.send = function(file) {
+      var dfd, fd, mimeBuilder, self;
       self = this;
       this.xhr = new XMLHttpRequest;
       if (this.options.onTransferStart) {
@@ -36,59 +39,41 @@
       if (this.options.onTransferProgress) {
         this.xhr.upload.addEventListener('progress', this.options.onTransferProgress);
       }
-      this.dfd = $.Deferred();
+      dfd = $.Deferred();
       if (this.options.onTransferComplete) {
-        this.bind('load', function(e) {
+        this.xhr.addEventListener('load', function(e) {
           var result, target;
           target = e.srcElement || e.target;
           if (window.console) {
             console.debug(target.responseText);
           }
           result = JSON.parse(target.responseText);
-          if (window.console) {
-            if (result.error) {
-              console.error('result', result);
-            } else {
-              console.debug('result', result);
+          if (result.error) {
+            if (window.console) {
+              console.error('Action result', result);
+            }
+          } else {
+            if (window.console) {
+              console.debug('Action result', result);
             }
           }
           self.options.onTransferComplete.call(this, e, result);
-          return self.dfd.resolve();
+          return dfd.resolve(e, result);
         });
       }
       if (this.options.onTransferFailed) {
-        this.bind('error', this.options.onTransferFailed);
+        this.xhr.addEventListener('error', this.options.onTransferFailed, false);
       }
       if (this.options.onTransferCanceled) {
-        this.bind('abort', this.options.onTransferCanceled);
+        this.xhr.addEventListener('abort', this.options.onTransferCanceled, false);
       }
       if (this.options.onReadyStateChange) {
         this.xhr.onreadystatechange = this.options.onReadyStateChange;
       }
-      this.open(this.options.endpoint, this.query);
-    }
-
-    Xhr.prototype.open = function(endpoint, query) {
-      return this.xhr.open('POST', endpoint + '?' + query, true);
-    };
-
-    Xhr.prototype.bind = function(evtname, cb) {
-      return this.xhr.addEventListener(evtname, cb, false);
-    };
-
-    Xhr.prototype.statechange = function(cb) {
-      return this.bind('statechange', cb);
-    };
-
-    Xhr.prototype.progress = function(cb) {
-      return this.bind('progress', cb);
-    };
-
-    Xhr.prototype.send = function(file) {
-      var fd, mimeBuilder;
+      this.xhr.open('POST', this.options.endpoint + '?' + this.query, true);
       if (typeof FormData !== "undefined") {
         if (window.console) {
-          console.log("Sending file", file);
+          console.info("Sending file using FormData...", file);
         }
         this.xhr.setRequestHeader("X-UPLOAD-FILENAME", encodeURIComponent(file.name));
         this.xhr.setRequestHeader("X-UPLOAD-SIZE", file.size);
@@ -99,7 +84,7 @@
         this.xhr.send(fd);
       } else if (this.xhr.sendAsBinary) {
         if (window.console) {
-          console.log('sendAsBinary', file);
+          console.info('Sending file using sendAsBinary', file);
         }
         mimeBuilder = new FiveKit.MimeBuilder;
         mimeBuilder.build({
@@ -112,7 +97,7 @@
           })(this)
         });
       }
-      return this.dfd;
+      return dfd;
     };
 
     return Xhr;

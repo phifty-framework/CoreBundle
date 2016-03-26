@@ -23,45 +23,34 @@ class window.FiveKit.Xhr
       @query = $(@options.form).serialize()
     else if @options.query
       @query = @options.query
+
+  send: (file) ->
     self = this
 
     @xhr = new XMLHttpRequest
     @xhr.upload.addEventListener 'loadstart',  @options.onTransferStart      if @options.onTransferStart
     @xhr.upload.addEventListener 'loadend',    @options.onTransferEnd        if @options.onTransferEnd
     @xhr.upload.addEventListener 'progress',   @options.onTransferProgress   if @options.onTransferProgress
-
-    @dfd = $.Deferred()
-
+    dfd = $.Deferred()
     if @options.onTransferComplete
-      @bind 'load', (e) ->
+      @xhr.addEventListener 'load', (e) ->
         target = e.srcElement or e.target
         console.debug target.responseText if window.console
         result = JSON.parse(target.responseText)
-        if window.console
-          if result.error
-            console.error('result',result)
-          else
-            console.debug('result',result)
+        if result.error
+          console.error('Action result',result) if window.console
+        else
+          console.debug('Action result',result) if window.console
         self.options.onTransferComplete.call(this,e,result)
-        self.dfd.resolve()
-    @bind('error', @options.onTransferFailed) if @options.onTransferFailed
-    @bind('abort', @options.onTransferCanceled) if @options.onTransferCanceled
+        dfd.resolve(e, result)
+    @xhr.addEventListener('error', @options.onTransferFailed, false) if @options.onTransferFailed
+    @xhr.addEventListener('abort', @options.onTransferCanceled, false) if @options.onTransferCanceled
     @xhr.onreadystatechange = @options.onReadyStateChange if @options.onReadyStateChange
-    @open(@options.endpoint,@query)
+    @xhr.open('POST', @options.endpoint + '?' + @query, true)
 
-  open: (endpoint,query) -> @xhr.open('POST', endpoint + '?' + query , true)
-
-  # progress, load, error, abort
-  bind: (evtname,cb) -> @xhr.addEventListener( evtname , cb, false)
-
-  statechange: (cb) -> @bind('statechange',cb)
-
-  progress: (cb) -> @bind('progress',cb)
-
-  send: (file) ->
-
-    if typeof FormData != "undefined"
-      console.log("Sending file",file) if window.console
+    # See if FormData is supported.
+    if typeof FormData isnt "undefined"
+      console.info("Sending file using FormData...",file) if window.console
       # Chrome 7 sends data but you must use the base64_decode on the PHP side
       # @xhr.setRequestHeader("Content-Type", "multipart/form-data")
       @xhr.setRequestHeader("X-UPLOAD-FILENAME", encodeURIComponent(file.name))
@@ -77,7 +66,7 @@ class window.FiveKit.Xhr
       # Firefox 3.6 provides a feature sendAsBinary ()
       # sendAsBinary() is NOT a standard and may not be supported in Chrome.
       # XXX: currently broken because the API changed.
-      console.log('sendAsBinary',file) if window.console
+      console.info('Sending file using sendAsBinary', file) if window.console
       mimeBuilder = new FiveKit.MimeBuilder
       mimeBuilder.build({
         file: file
@@ -88,7 +77,6 @@ class window.FiveKit.Xhr
           #
           @xhr.sendAsBinary(b.body)
       })
-
-    return @dfd
+    return dfd
     # bin is from reader.result (binary)
     # @xhr.send(window.btoa(bin))

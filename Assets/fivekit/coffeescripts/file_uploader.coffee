@@ -1,6 +1,31 @@
 
 window.FiveKit = {} if typeof window.FiveKit is "undefined"
 
+###
+
+Usage
+
+  uploader = new FiveKit.FileUploader
+    endpoint: "/bs"
+    action: @options.action
+    progressContainer: @queueEl
+    onReadyStateChange: @options.onReadyStateChange
+    onTransferProgress: @options.onTransferProgress
+    onTransferComplete: @options.onTransferComplete
+    onTransferFinished: @options.onTransferFinished
+    onTransferStart:    @options.onTransferStart
+  uploader.upload(e.dataTransfer.files)
+
+
+
+  fileUploader = new FiveKit.FileUploader
+    endpoint: "/bs"
+    action: @options.action
+    onTransferComplete: (e, result) -> console.log("onTransferComplete", e, result)
+  fileUploader.upload(e.target.files[0])
+
+
+###
 class FiveKit.FileUploader
   actionClass: "CoreBundle::Action::Html5Upload"
 
@@ -9,12 +34,21 @@ class FiveKit.FileUploader
     @progressContainer = @config.progressContainer
 
   upload: (file) ->
+    defer = $.Deferred()
     ActionCsrfToken.get success: (csrfToken) =>
       rs = @uploadFile(csrfToken, file)
-      $.when.apply($, [rs]).done(@config.onTransferFinished ) if @config.onTransferFinished
+      $.when.apply($, [rs]).done (e,response) =>
+        @config.onTransferFinished(e,response) if @config.onTransferFinished
+        defer.resolve(e,response)
+    return defer
 
+  ###
+  # @param file
+  ###
   uploadFile: (csrfToken, file) ->
     self = this
+
+    # create progress container element if it's given.
     if @progressContainer
       progressItem = new FiveKit.UploadProgressItem(file)
       progressItem.el.appendTo(@progressContainer)

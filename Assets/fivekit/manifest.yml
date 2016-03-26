@@ -13,3 +13,4 @@ collections:
   - javascripts/dropbox_uploader.js
   - javascripts/dropbox_act_connection.js
   - javascripts/previewer.js
+  watch: coffee -w --output javascripts -c coffeescripts

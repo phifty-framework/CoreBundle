@@ -4,6 +4,31 @@
     window.FiveKit = {};
   }
 
+
+  /*
+  
+  Usage
+  
+    uploader = new FiveKit.FileUploader
+      endpoint: "/bs"
+      action: @options.action
+      progressContainer: @queueEl
+      onReadyStateChange: @options.onReadyStateChange
+      onTransferProgress: @options.onTransferProgress
+      onTransferComplete: @options.onTransferComplete
+      onTransferFinished: @options.onTransferFinished
+      onTransferStart:    @options.onTransferStart
+    uploader.upload(e.dataTransfer.files)
+  
+  
+  
+    fileUploader = new FiveKit.FileUploader
+      endpoint: "/bs"
+      action: @options.action
+      onTransferComplete: (e, result) -> console.log("onTransferComplete", e, result)
+    fileUploader.upload(e.target.files[0])
+   */
+
   FiveKit.FileUploader = (function() {
     FileUploader.prototype.actionClass = "CoreBundle::Action::Html5Upload";
 
@@ -16,18 +41,29 @@
     }
 
     FileUploader.prototype.upload = function(file) {
-      return ActionCsrfToken.get({
+      var defer;
+      defer = $.Deferred();
+      ActionCsrfToken.get({
         success: (function(_this) {
           return function(csrfToken) {
             var rs;
             rs = _this.uploadFile(csrfToken, file);
-            if (_this.config.onTransferFinished) {
-              return $.when.apply($, [rs]).done(_this.config.onTransferFinished);
-            }
+            return $.when.apply($, [rs]).done(function(e, response) {
+              if (_this.config.onTransferFinished) {
+                _this.config.onTransferFinished(e, response);
+              }
+              return defer.resolve(e, response);
+            });
           };
         })(this)
       });
+      return defer;
     };
+
+
+    /*
+     * @param file
+     */
 
     FileUploader.prototype.uploadFile = function(csrfToken, file) {
       var progressItem, self, xhr;

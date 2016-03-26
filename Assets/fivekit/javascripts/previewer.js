@@ -39,11 +39,21 @@ Dependencies: FiveKit.Dropbox,
       var $dropzone, d, defaultDimension;
       this.fileInput.on("change", (function(_this) {
         return function(e) {
-          var ref, ref1;
+          var fileUploader;
           _this.use("file");
-          if ((ref = e.target) != null ? (ref1 = ref.files) != null ? ref1[0] : void 0 : void 0) {
-            return _this.renderPreviewImage(e.target.files[0]);
-          }
+          fileUploader = new FiveKit.FileUploader({
+            endpoint: "/bs",
+            action: _this.options.action,
+            onTransferComplete: function(e, result) {
+              return console.log("onTransferComplete", e, result);
+            }
+          });
+          return fileUploader.upload(e.target.files[0]).done(function(e, result) {
+            var ref;
+            if ((ref = result.data) != null ? ref.file : void 0) {
+              return _this.renderPreviewImage(result.data.file);
+            }
+          });
         };
       })(this));
       this.fileInput.after(this.hiddenInput);
@@ -170,8 +180,9 @@ Dependencies: FiveKit.Dropbox,
             var ref;
             progressBarContainer.empty().show();
             if (((ref = e.dataTransfer.files) != null ? ref[0] : void 0)) {
-              return _this.renderPreviewImage(e.dataTransfer.files[0]);
+              _this.renderPreviewImage(e.dataTransfer.files[0]);
             }
+            return _this.fileInput.hide();
           };
         })(this),
         onTransferComplete: (function(_this) {
@@ -294,15 +305,18 @@ Dependencies: FiveKit.Dropbox,
 
     Previewer.prototype.renderPreviewImage = function(file) {
       var filereader;
-      filereader = new FiveKit.FileReader({
-        onLoaded: (function(_this) {
-          return function(e) {
-            _this.renderCoverImage(e.target.result);
-            return _this.fileInput.hide();
-          };
-        })(this)
-      });
-      return filereader.read(file);
+      if (file instanceof File) {
+        filereader = new FiveKit.FileReader({
+          onLoaded: (function(_this) {
+            return function(e) {
+              return _this.renderCoverImage(e.target.result);
+            };
+          })(this)
+        });
+        return filereader.read(file);
+      } else if (typeof file === "string") {
+        return this.renderCoverImage("/" + file);
+      }
     };
 
     return Previewer;
@@ -312,7 +326,6 @@ Dependencies: FiveKit.Dropbox,
   FormKit.register(function(e, scopeEl) {
     return $(scopeEl).find('.formkit-widget-thumbimagefile input[data-droppreview=true]').each(function(i, fileInput) {
       var previewer;
-      console.info("init previewer at ", fileInput);
       return previewer = new FiveKit.Previewer({
         el: $(fileInput)
       });
