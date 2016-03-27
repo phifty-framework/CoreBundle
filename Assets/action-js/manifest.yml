@@ -4,6 +4,7 @@ collections:
   - css:
     - action.css
   - js:
+    - setup.js
     - action.js
     - search-action.js
     - action-growl.js
