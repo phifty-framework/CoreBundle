@@ -37,9 +37,12 @@ class FiveKit.FileUploader
     defer = $.Deferred()
     ActionCsrfToken.get success: (csrfToken) =>
       rs = @uploadFile(csrfToken, file)
-      $.when.apply($, [rs]).done (e,response) =>
+      promise = $.when.apply($, [rs])
+      promise.done (e,response) =>
         @config.onTransferFinished(e,response) if @config.onTransferFinished
         defer.resolve(e,response)
+      promise.fail (e,response) =>
+        defer.reject(e,response)
     return defer
 
   ###
@@ -58,7 +61,7 @@ class FiveKit.FileUploader
       params: {
         __action: @actionClass
         __ajax_request: 1
-        __csrf_token: csrfToken.hash
+        __csrf_token: csrfToken
       }
       onReadyStateChange: (e) ->
         console.debug('onReadyStateChange',e) if window.console

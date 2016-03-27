@@ -52,8 +52,13 @@ class window.FiveKit.Previewer
 
       # @param {XMLHttpRequestProgressEvent} e xhr progress event
       # @param {object} result the returned data of the uploaded file.
-      fileUploader.upload(e.target.files[0]).done (e,result) =>
+      promise = fileUploader.upload(e.target.files[0])
+      promise.done (e,result) =>
         @renderPreviewImage(result.data.file) if result.data?.file
+      promise.fail (e,result) =>
+        console.error(e, result)
+        if typeof $.jGrowl isnt "undefined"
+          $.jGrowl("Upload failed.", { theme: 'error' })
 
 
       # if the user select file from local, then make 'hidden' Value the same

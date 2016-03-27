@@ -76,18 +76,23 @@ USAGE
       });
     },
     get: function(config) {
-      var csrfToken, expiryTime, now, tokenExpired;
+      var cookieCsrf, csrfToken, defer, tokenExpired;
       tokenExpired = true;
       csrfToken = this._csrfToken;
+      if (typeof Cookies !== "undefined") {
+        cookieCsrf = Cookies.get('csrf');
+      }
+      if (cookieCsrf) {
+        return typeof config.success === "function" ? config.success(cookieCsrf) : void 0;
+      }
       if (csrfToken) {
-        expiryTime = (csrfToken.timestamp + csrfToken.ttl) * 1000;
-        now = new Date;
-        tokenExpired = now.getTime() > expiryTime;
+        tokenExpired = (new Date).getTime() > (csrfToken.timestamp + csrfToken.ttl) * 1000;
       }
       if (!tokenExpired) {
-        return typeof config.success === "function" ? config.success(csrfToken) : void 0;
+        return typeof config.success === "function" ? config.success(csrfToken.hash) : void 0;
       } else {
-        return this.requestSession().success((function(_this) {
+        defer = $.Deferred();
+        this.requestSession().success((function(_this) {
           return function(resp) {
             if (resp.error) {
               console.error("requestSession error", resp.error);
@@ -97,10 +102,14 @@ USAGE
             } else {
               console.debug("csrfToken refreshed", resp);
               _this._csrfToken = resp;
-              return typeof config.success === "function" ? config.success(resp) : void 0;
+              if (typeof config.success === "function") {
+                config.success(_this._csrfToken.hash);
+              }
+              return defer.resolve(resp);
             }
           };
         })(this));
+        return defer;
       }
     }
   };
@@ -314,7 +323,7 @@ USAGE
 
     Action.prototype._processRegionOptions = function(options, resp) {
       var form, reg, regionKeys;
-      if (typeof Region !== "undefined") {
+      if (typeof Region === "undefined") {
         throw "Region is undefined.";
       }
       form = this.form();
@@ -512,6 +521,11 @@ USAGE
         "__ajax_request": 1
       };
       payload = $.extend(payload, args);
+      if (!payload.__csrf_token) {
+        if (typeof Cookies !== "undefined") {
+          payload.__csrf_token = Cookies.get('csrf');
+        }
+      }
       if (payload.__csrf_token) {
         doSubmit(payload).fail(function(a) {
           return console.log('fail', a);
@@ -523,7 +537,7 @@ USAGE
       ActionCsrfToken.get({
         success: (function(_this) {
           return function(csrfToken) {
-            payload.__csrf_token = csrfToken.hash;
+            payload.__csrf_token = csrfToken;
             return doSubmit(payload).fail(function(a) {
               return console.log('fail', a);
             }).done(function(a) {

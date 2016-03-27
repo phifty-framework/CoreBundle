@@ -86,13 +86,15 @@ window.ActionCsrfToken =
   get: (config) ->
     tokenExpired = true
     csrfToken = this._csrfToken
+    cookieCsrf = Cookies.get('csrf') if typeof Cookies isnt "undefined"
+    if cookieCsrf
+      return config.success?(cookieCsrf)
     if csrfToken
-      expiryTime = (csrfToken.timestamp + csrfToken.ttl) * 1000
-      now = new Date
-      tokenExpired = now.getTime() > expiryTime
+      tokenExpired = (new Date).getTime() > (csrfToken.timestamp + csrfToken.ttl) * 1000
     if not tokenExpired
-      config.success?(csrfToken)
+      return config.success?(csrfToken.hash)
     else
+      defer = $.Deferred()
       this.requestSession().success (resp) =>
         if resp.error
           console.error("requestSession error",resp.error)
@@ -101,7 +103,9 @@ window.ActionCsrfToken =
         else
           console.debug("csrfToken refreshed", resp)
           this._csrfToken = resp
-          config.success?(resp)
+          config.success?(this._csrfToken.hash)
+          defer.resolve(resp)
+      return defer
 
 
 class Action
@@ -256,7 +260,7 @@ class Action
       setTimeout (-> window.location = resp.redirect), resp.delay * 1000 || options.delay || 0
 
   _processRegionOptions: (options,resp) ->
-    throw "Region is undefined." unless typeof Region is "undefined"
+    throw "Region is undefined." if typeof Region is "undefined"
 
     # if form exists, region options should based on the region of form.
     form = @form()
@@ -428,6 +432,10 @@ class Action
       "__ajax_request": 1
     payload = $.extend(payload, args)
 
+
+    if not payload.__csrf_token
+      payload.__csrf_token = Cookies.get('csrf') if typeof Cookies isnt "undefined"
+
     if payload.__csrf_token
       doSubmit(payload)
         .fail((a) -> console.log('fail',a))
@@ -436,7 +444,7 @@ class Action
 
     ActionCsrfToken.get success: (csrfToken) =>
       # Inject __ajax_request: 1 if there is no form element.
-      payload.__csrf_token = csrfToken.hash
+      payload.__csrf_token = csrfToken
       doSubmit(payload)
         .fail((a) -> console.log('fail',a))
         .done((a) -> console.log('done',a))

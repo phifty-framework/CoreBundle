@@ -39,7 +39,7 @@ Dependencies: FiveKit.Dropbox,
       var $dropzone, d, defaultDimension;
       this.fileInput.on("change", (function(_this) {
         return function(e) {
-          var fileUploader;
+          var fileUploader, promise;
           _this.use("file");
           fileUploader = new FiveKit.FileUploader({
             endpoint: "/bs",
@@ -48,10 +48,19 @@ Dependencies: FiveKit.Dropbox,
               return console.log("onTransferComplete", e, result);
             }
           });
-          return fileUploader.upload(e.target.files[0]).done(function(e, result) {
+          promise = fileUploader.upload(e.target.files[0]);
+          promise.done(function(e, result) {
             var ref;
             if ((ref = result.data) != null ? ref.file : void 0) {
               return _this.renderPreviewImage(result.data.file);
+            }
+          });
+          return promise.fail(function(e, result) {
+            console.error(e, result);
+            if (typeof $.jGrowl !== "undefined") {
+              return $.jGrowl("Upload failed.", {
+                theme: 'error'
+              });
             }
           });
         };

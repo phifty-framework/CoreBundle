@@ -46,13 +46,17 @@
       ActionCsrfToken.get({
         success: (function(_this) {
           return function(csrfToken) {
-            var rs;
+            var promise, rs;
             rs = _this.uploadFile(csrfToken, file);
-            return $.when.apply($, [rs]).done(function(e, response) {
+            promise = $.when.apply($, [rs]);
+            promise.done(function(e, response) {
               if (_this.config.onTransferFinished) {
                 _this.config.onTransferFinished(e, response);
               }
               return defer.resolve(e, response);
+            });
+            return promise.fail(function(e, response) {
+              return defer.reject(e, response);
             });
           };
         })(this)
@@ -77,7 +81,7 @@
         params: {
           __action: this.actionClass,
           __ajax_request: 1,
-          __csrf_token: csrfToken.hash
+          __csrf_token: csrfToken
         },
         onReadyStateChange: function(e) {
           if (window.console) {
