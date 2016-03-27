@@ -17,18 +17,14 @@
   window.FiveKit.Xhr = (function() {
     function Xhr(options) {
       this.options = options;
-      if (this.options.params) {
-        this.query = $.param(this.options.params);
-      } else if (this.options.form) {
-        this.query = $(this.options.form).serialize();
-      } else if (this.options.query) {
-        this.query = this.options.query;
-      }
     }
 
     Xhr.prototype.send = function(file) {
-      var dfd, fd, mimeBuilder, self;
+      var dfd, fd, mimeBuilder, name, query, ref, self, value;
       self = this;
+      if (this.options.query) {
+        query = this.options.query;
+      }
       this.xhr = new XMLHttpRequest;
       if (this.options.onTransferStart) {
         this.xhr.upload.addEventListener('loadstart', this.options.onTransferStart);
@@ -70,7 +66,11 @@
       if (this.options.onReadyStateChange) {
         this.xhr.onreadystatechange = this.options.onReadyStateChange;
       }
-      this.xhr.open('POST', this.options.endpoint + '?' + this.query, true);
+      if (query) {
+        this.xhr.open('POST', this.options.endpoint + '?' + query, true);
+      } else {
+        this.xhr.open('POST', this.options.endpoint, true);
+      }
       if (typeof FormData !== "undefined") {
         if (window.console) {
           console.info("Sending file using FormData...", file);
@@ -81,6 +81,11 @@
         this.xhr.setRequestHeader("X-UPLOAD-MODIFIED-DATE", encodeURIComponent(file.lastModifiedDate.toISOString()));
         fd = new FormData;
         fd.append("upload", file);
+        ref = this.options.params;
+        for (name in ref) {
+          value = ref[name];
+          fd.append(name, value);
+        }
         this.xhr.send(fd);
       } else if (this.xhr.sendAsBinary) {
         if (window.console) {

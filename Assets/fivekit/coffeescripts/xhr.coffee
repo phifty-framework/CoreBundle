@@ -17,15 +17,12 @@ window.FiveKit = {} unless window.FiveKit
 
 class window.FiveKit.Xhr
   constructor: (@options) ->
-    if @options.params
-      @query = $.param( @options.params )
-    else if @options.form
-      @query = $(@options.form).serialize()
-    else if @options.query
-      @query = @options.query
 
   send: (file) ->
     self = this
+
+    if @options.query
+      query = @options.query
 
     @xhr = new XMLHttpRequest
     @xhr.upload.addEventListener 'loadstart',  @options.onTransferStart      if @options.onTransferStart
@@ -46,7 +43,14 @@ class window.FiveKit.Xhr
     @xhr.addEventListener('error', @options.onTransferFailed, false) if @options.onTransferFailed
     @xhr.addEventListener('abort', @options.onTransferCanceled, false) if @options.onTransferCanceled
     @xhr.onreadystatechange = @options.onReadyStateChange if @options.onReadyStateChange
-    @xhr.open('POST', @options.endpoint + '?' + @query, true)
+
+
+    # if FormData is supported, we will use it to post form field values
+    if query
+      @xhr.open('POST', @options.endpoint + '?' + query, true)
+    else
+      @xhr.open('POST', @options.endpoint, true)
+
 
     # See if FormData is supported.
     if typeof FormData isnt "undefined"
@@ -61,6 +65,8 @@ class window.FiveKit.Xhr
 
       fd = new FormData
       fd.append "upload",file
+      for name, value of @options.params
+        fd.append(name, value)
       @xhr.send fd
     else if @xhr.sendAsBinary
       # Firefox 3.6 provides a feature sendAsBinary ()
