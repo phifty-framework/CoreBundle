@@ -7,6 +7,20 @@ Dependencies: FiveKit.Dropbox,
 $ = jQuery
 window.FiveKit = {} unless window.FiveKit
 
+fixedEncodeURIComponent = (str) ->
+  encodeURIComponent(str).replace /[!'()*]/g, (c) ->
+    '%' + c.charCodeAt(0).toString(16)
+
+CSS =
+  url: (url) -> 'url(' + url.split('/').map(fixedEncodeURIComponent).join('/') + ')'
+
+  # toCssBackgroundSize converts image dimension into 
+  # background-size property value, "contain" by default
+  backgroundSize: (d) ->
+    return d.width + ' ' + d.height if typeof d is "object"
+    return d if typeof d is "string"
+    return "contain"
+
 class window.FiveKit.Previewer
 
   # XXX: we may use dom hash to save these dom element objects
@@ -17,23 +31,30 @@ class window.FiveKit.Previewer
     @fieldName = @fileInput.attr('name')
 
     # create a hidden input for saving the uploaded path
-    @hiddenInput = @createHiddenInput(@fieldName)
+    #
+    # .formkit-widget-thumbimagefile-hidden
+    # create a hiddenFileInput for later use
+    # why we have to reassign name attribute is because the form would use a key-value mapping 
+    # to store fileds' information
+    @hiddenInput = $('<input type="hidden" class="formkit-widget-thumbimagefile-hidden">')
+
 
     # find the parent widget container element
     @widgetContainer = @fileInput.parents(".formkit-widget-thumbimagefile")
 
-    @widgetContainer.css({
+    @widgetContainer.css
       position: "relative"
-    })
 
     # find the existing image cover
     @cover = @widgetContainer.find(".formkit-image-cover")
+    @cover.css
+      display: "block"
+      margin: 0
+      padding: 0
 
     # find cover image (note that cover wrapper can be empty)
-    @coverImage = @cover.find('img')
+    @coverImage = @cover.find('.image')
     @coverImage.css({ zIndex: 1 })
-
-    # @cover.wrap('<a class="cover-preview-image" target="_blank" href="' + @coverImage.attr('src') + '"></a>')
 
     @autoresizeCheckbox = @widgetContainer.find('.autoresize-checkbox')
     @autoresizeTypeSelector = @widgetContainer.find('.autoresize-type-selector')
@@ -54,28 +75,16 @@ class window.FiveKit.Previewer
       # @param {object} result the returned data of the uploaded file.
       promise = fileUploader.upload(e.target.files[0])
       promise.done (e,result) =>
-        @renderPreviewImage(result.data.file) if result.data?.file
+        @renderCoverImage("/" + result.data.file) if result.data?.file
       promise.fail (e,result) =>
         console.error(e, result)
         if typeof $.jGrowl isnt "undefined"
           $.jGrowl("Upload failed.", { theme: 'error' })
 
-
-      # if the user select file from local, then make 'hidden' Value the same
-      # with FileInput to make sure data key-value table would get the same
-      # value
-      #
-      # We have C:\fakepath problem here
-      # Some browsers is preventing users to get file input value from js.
-      #
-      # @renderPreviewImage(e.target.files[0]) if e.target?.files?[0]
-      # @hiddenInput.val(    )
-
     @fileInput.after(@hiddenInput)
 
-
-    # resize preview cover
-    d = @getImageDimension()
+    # Resize preview cover
+    d = @getImageDisplayDimension()
 
     # create a dropzone element
     $dropzone = $('<div/>').addClass('image-dropzone').css({
@@ -84,17 +93,20 @@ class window.FiveKit.Previewer
     })
     @cover.before $dropzone
 
-    defaultDimension = { width: 240, height: 120 }
-
     @widgetContainer.css({ display: 'inline-block' })
+    @widgetContainer.css(d) # update the container size
 
     # create image holder
     @updateCover(d)
 
+    if @fileInput.data('imageSrc')
+      @renderCoverImage(@fileInput.data('imageSrc'))
+
     if d and d.width and d.height
-      @cover.css( @scalePreviewDimension(d) )
-      $dropzone.css( @scalePreviewDimension( d ) )
+      @cover.css(@scalePreviewDimension(d))
+      $dropzone.css(@scalePreviewDimension(d))
     else
+      defaultDimension = { width: 240, height: 120 }
       @cover.css(defaultDimension)
       $dropzone.css(defaultDimension)
 
@@ -108,10 +120,9 @@ class window.FiveKit.Previewer
       @insertImageHolder(d)
     else
       @scaleCoverImageByDefault(d) if d
-
       # image cover html generated from backend does not contains
       # remove button and exif button.
-      @initCoverController()
+      @_initCoverController()
 
   scalePreviewDimension: (d) ->
     if d.width > 350
@@ -152,21 +163,22 @@ class window.FiveKit.Previewer
     else
       console.warn("Holder js is not installed.")
 
+  getImageDisplayDimension: () ->
+    d = { }
+    d.width = @fileInput.data('displayWidth') if @fileInput.data('displayWidth')
+    d.height = @fileInput.data('displayHeight') if @fileInput.data('displayHeight')
+    if d.width and d.height
+      return d
+    d = {}
+    d.width = @fileInput.data('width') if @fileInput.data('width')
+    d.height = @fileInput.data('height') if @fileInput.data('height')
+    return d
+
   getImageDimension: () ->
     d = { }
     d.width = @fileInput.data('width') if @fileInput.data('width')
     d.height = @fileInput.data('height') if @fileInput.data('height')
     return d
-
-  removeCoverImage: () -> @cover.empty()
-
-  createHiddenInput: (name) ->
-    # .formkit-widget-thumbimagefile-hidden
-    # create a hiddenFileInput for later use
-    # why we have to reassign name attribute is because the form would use a key-value mapping 
-    # to store fileds' information
-    $input = $('<input type="hidden" class="formkit-widget-thumbimagefile-hidden">')
-    return $input
 
   initDropbox: (dropzone) ->
     # set + create DOM
@@ -219,7 +231,7 @@ class window.FiveKit.Previewer
     @coverImage.css { height: '100%', width: 'auto' } if @coverImage.height() > d.height
 
   scaleCoverImageByFullScale: (d) ->
-    $(img).css { height: '100%', width: '100%' }
+    @coverImage.css { height: '100%', width: '100%' }
 
   scaleCoverImageByDefault: (d) ->
     if d and @coverImage.get(0)
@@ -230,26 +242,41 @@ class window.FiveKit.Previewer
       # if @coverImage.width() > d.width
       #   @coverImage.css { width: '100%', height: 'auto' }
 
+
+  removeCoverImage: () ->
+    @cover.empty()
+    @cover.css { backgroundImage: "none" }
+
   # src: image src path or base64 encoded content
   renderCoverImage: (src) ->
-    # first cleanup existing cover image
     @removeCoverImage()
+
+    console.log("renderCoverImage", src, @cover)
+    # first cleanup existing cover image
     self = this
 
     d = @getImageDimension()
-    @coverImage = $('<img/>').appendTo @cover
-    @coverImage.hide()
 
-    # for IE7 or upper, we should setup the load handler before we set the image source.
+    console.log(CSS.url(src))
+
+    @coverImage = $('<div/>').appendTo @cover
+    @coverImage.css({
+      backgroundImage: CSS.url(src)
+      backgroundSize: "cover"
+      backgroundRepeat: "no-repeat"
+    })
+    @coverImage.css { position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }
+
+    ###
     @coverImage.on 'load', ->
       $(this).exifLoad()
       self.scaleCoverImageByDefault(d) if d
       $(this).fadeIn()
-    @coverImage.attr('src', src)
-    @initCoverController()
-    return @coverImage
+    ###
+    @_initCoverController()
+    return
 
-  initCoverController: () ->
+  _initCoverController: () ->
     # TODO: Extract to css for this remove button
     removeButton = $(document.createElement('div')).addClass('remove')
       .css({
@@ -266,7 +293,7 @@ class window.FiveKit.Previewer
 
       @removeCoverImage()
       @use "file"
-      @insertImageHolder( @getImageDimension() )
+      @insertImageHolder(@getImageDimension())
       return false
     @cover.append removeButton
 

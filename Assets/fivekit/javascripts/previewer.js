@@ -7,7 +7,7 @@ Dependencies: FiveKit.Dropbox,
  */
 
 (function() {
-  var $;
+  var $, CSS, fixedEncodeURIComponent;
 
   $ = jQuery;
 
@@ -15,18 +15,44 @@ Dependencies: FiveKit.Dropbox,
     window.FiveKit = {};
   }
 
+  fixedEncodeURIComponent = function(str) {
+    return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+      return '%' + c.charCodeAt(0).toString(16);
+    });
+  };
+
+  CSS = {
+    url: function(url) {
+      return 'url(' + url.split('/').map(fixedEncodeURIComponent).join('/') + ')';
+    },
+    backgroundSize: function(d) {
+      if (typeof d === "object") {
+        return d.width + ' ' + d.height;
+      }
+      if (typeof d === "string") {
+        return d;
+      }
+      return "contain";
+    }
+  };
+
   window.FiveKit.Previewer = (function() {
     function Previewer(options) {
       this.options = options;
       this.fileInput = $(this.options.el);
       this.fieldName = this.fileInput.attr('name');
-      this.hiddenInput = this.createHiddenInput(this.fieldName);
+      this.hiddenInput = $('<input type="hidden" class="formkit-widget-thumbimagefile-hidden">');
       this.widgetContainer = this.fileInput.parents(".formkit-widget-thumbimagefile");
       this.widgetContainer.css({
         position: "relative"
       });
       this.cover = this.widgetContainer.find(".formkit-image-cover");
-      this.coverImage = this.cover.find('img');
+      this.cover.css({
+        display: "block",
+        margin: 0,
+        padding: 0
+      });
+      this.coverImage = this.cover.find('.image');
       this.coverImage.css({
         zIndex: 1
       });
@@ -52,7 +78,7 @@ Dependencies: FiveKit.Dropbox,
           promise.done(function(e, result) {
             var ref;
             if ((ref = result.data) != null ? ref.file : void 0) {
-              return _this.renderPreviewImage(result.data.file);
+              return _this.renderCoverImage("/" + result.data.file);
             }
           });
           return promise.fail(function(e, result) {
@@ -66,24 +92,28 @@ Dependencies: FiveKit.Dropbox,
         };
       })(this));
       this.fileInput.after(this.hiddenInput);
-      d = this.getImageDimension();
+      d = this.getImageDisplayDimension();
       $dropzone = $('<div/>').addClass('image-dropzone').css({
         position: 'absolute',
         zIndex: 2
       });
       this.cover.before($dropzone);
-      defaultDimension = {
-        width: 240,
-        height: 120
-      };
       this.widgetContainer.css({
         display: 'inline-block'
       });
+      this.widgetContainer.css(d);
       this.updateCover(d);
+      if (this.fileInput.data('imageSrc')) {
+        this.renderCoverImage(this.fileInput.data('imageSrc'));
+      }
       if (d && d.width && d.height) {
         this.cover.css(this.scalePreviewDimension(d));
         $dropzone.css(this.scalePreviewDimension(d));
       } else {
+        defaultDimension = {
+          width: 240,
+          height: 120
+        };
         this.cover.css(defaultDimension);
         $dropzone.css(defaultDimension);
       }
@@ -97,7 +127,7 @@ Dependencies: FiveKit.Dropbox,
         if (d) {
           this.scaleCoverImageByDefault(d);
         }
-        return this.initCoverController();
+        return this._initCoverController();
       }
     };
 
@@ -152,8 +182,18 @@ Dependencies: FiveKit.Dropbox,
       }
     };
 
-    Previewer.prototype.getImageDimension = function() {
+    Previewer.prototype.getImageDisplayDimension = function() {
       var d;
+      d = {};
+      if (this.fileInput.data('displayWidth')) {
+        d.width = this.fileInput.data('displayWidth');
+      }
+      if (this.fileInput.data('displayHeight')) {
+        d.height = this.fileInput.data('displayHeight');
+      }
+      if (d.width && d.height) {
+        return d;
+      }
       d = {};
       if (this.fileInput.data('width')) {
         d.width = this.fileInput.data('width');
@@ -164,14 +204,16 @@ Dependencies: FiveKit.Dropbox,
       return d;
     };
 
-    Previewer.prototype.removeCoverImage = function() {
-      return this.cover.empty();
-    };
-
-    Previewer.prototype.createHiddenInput = function(name) {
-      var $input;
-      $input = $('<input type="hidden" class="formkit-widget-thumbimagefile-hidden">');
-      return $input;
+    Previewer.prototype.getImageDimension = function() {
+      var d;
+      d = {};
+      if (this.fileInput.data('width')) {
+        d.width = this.fileInput.data('width');
+      }
+      if (this.fileInput.data('height')) {
+        d.height = this.fileInput.data('height');
+      }
+      return d;
     };
 
     Previewer.prototype.initDropbox = function(dropzone) {
@@ -244,7 +286,7 @@ Dependencies: FiveKit.Dropbox,
     };
 
     Previewer.prototype.scaleCoverImageByFullScale = function(d) {
-      return $(img).css({
+      return this.coverImage.css({
         height: '100%',
         width: '100%'
       });
@@ -257,26 +299,44 @@ Dependencies: FiveKit.Dropbox,
       }
     };
 
+    Previewer.prototype.removeCoverImage = function() {
+      this.cover.empty();
+      return this.cover.css({
+        backgroundImage: "none"
+      });
+    };
+
     Previewer.prototype.renderCoverImage = function(src) {
       var d, self;
       this.removeCoverImage();
+      console.log("renderCoverImage", src, this.cover);
       self = this;
       d = this.getImageDimension();
-      this.coverImage = $('<img/>').appendTo(this.cover);
-      this.coverImage.hide();
-      this.coverImage.on('load', function() {
-        $(this).exifLoad();
-        if (d) {
-          self.scaleCoverImageByDefault(d);
-        }
-        return $(this).fadeIn();
+      console.log(CSS.url(src));
+      this.coverImage = $('<div/>').appendTo(this.cover);
+      this.coverImage.css({
+        backgroundImage: CSS.url(src),
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat"
       });
-      this.coverImage.attr('src', src);
-      this.initCoverController();
-      return this.coverImage;
+      this.coverImage.css({
+        position: "absolute",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
+      });
+
+      /*
+      @coverImage.on 'load', ->
+        $(this).exifLoad()
+        self.scaleCoverImageByDefault(d) if d
+        $(this).fadeIn()
+       */
+      this._initCoverController();
     };
 
-    Previewer.prototype.initCoverController = function() {
+    Previewer.prototype._initCoverController = function() {
       var exifButton, exifData, removeButton;
       removeButton = $(document.createElement('div')).addClass('remove').css({
         'zIndex': 1000,
