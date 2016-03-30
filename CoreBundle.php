@@ -48,10 +48,11 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
     public function init()
     {
         // $this->route( '/' , 'Index' );
-        $this->route( '/not_found' , 'NotFound' );
+        // $this->route( '/not-found' , 'NotFound' );
+        $this->route('/=/current_user/csrf', 'CsrfController');
 
         // register twig function for exception
-        if( $this->kernel->isDev ) {
+        if ($this->kernel->isDev) {
             // $this->kernel->twig->env->addFunction('trace_get_block'  , new Twig_Function_Function('CoreBundle\Controller\trace_get_block'));
             $this->route( '/_dev/code' , 'ExceptionController:code' );
             $this->route( '/_dev/info' , 'InfoController:phpinfo' );
