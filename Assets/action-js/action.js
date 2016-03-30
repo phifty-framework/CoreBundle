@@ -526,25 +526,10 @@ USAGE
           payload.__csrf_token = Cookies.get('csrf');
         }
       }
-      if (payload.__csrf_token) {
-        doSubmit(payload).fail(function(a) {
-          return console.log('fail', a);
-        }).done(function(a) {
-          return console.log('done', a);
-        });
-        return false;
-      }
-      ActionCsrfToken.get({
-        success: (function(_this) {
-          return function(csrfToken) {
-            payload.__csrf_token = csrfToken;
-            return doSubmit(payload).fail(function(a) {
-              return console.log('fail', a);
-            }).done(function(a) {
-              return console.log('done', a);
-            });
-          };
-        })(this)
+      doSubmit(payload).fail(function(a) {
+        return console.log('fail', a);
+      }).done(function(a) {
+        return console.log('done', a);
       });
       return false;
     };

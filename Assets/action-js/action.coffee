@@ -436,18 +436,9 @@ class Action
     if not payload.__csrf_token
       payload.__csrf_token = Cookies.get('csrf') if typeof Cookies isnt "undefined"
 
-    if payload.__csrf_token
-      doSubmit(payload)
-        .fail((a) -> console.log('fail',a))
-        .done((a) -> console.log('done',a))
-      return false
-
-    ActionCsrfToken.get success: (csrfToken) =>
-      # Inject __ajax_request: 1 if there is no form element.
-      payload.__csrf_token = csrfToken
-      doSubmit(payload)
-        .fail((a) -> console.log('fail',a))
-        .done((a) -> console.log('done',a))
+    doSubmit(payload)
+      .fail((a) -> console.log('fail',a))
+      .done((a) -> console.log('done',a))
     return false
 
   ###
