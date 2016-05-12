@@ -526,12 +526,11 @@ USAGE
           payload.__csrf_token = Cookies.get('csrf');
         }
       }
-      doSubmit(payload).fail(function(a) {
-        return console.log('fail', a);
+      return doSubmit(payload).fail(function(a) {
+        return console.debug(actionName + " failed:", a);
       }).done(function(a) {
-        return console.log('done', a);
+        return console.debug(actionName + " done:", a);
       });
-      return false;
     };
 
 
@@ -563,10 +562,9 @@ USAGE
       $(this).trigger('action.before_submit', [data]);
       if ($form.find("input[type=file]").get(0) && $form.find('input[type=file]').parents('form').get(0) === $form.get(0)) {
         return this.submitWithAIM(data, cb);
-      } else {
-        return this.run(data.action, data);
       }
-      return true;
+      this.run(data.action, data);
+      return false;
     };
 
     Action.prototype.submitWithAIM = function(data, cb) {

@@ -435,11 +435,9 @@ class Action
 
     if not payload.__csrf_token
       payload.__csrf_token = Cookies.get('csrf') if typeof Cookies isnt "undefined"
-
-    doSubmit(payload)
-      .fail((a) -> console.log('fail',a))
-      .done((a) -> console.log('done',a))
-    return false
+    return doSubmit(payload)
+      .fail((a) -> console.debug("#{actionName} failed:",a))
+      .done((a) -> console.debug("#{actionName} done:",a))
 
   ###
    * submit:
@@ -471,10 +469,10 @@ class Action
     # We should use AIM instead of normal ajax request.
     if $form.find("input[type=file]").get(0) and $form.find('input[type=file]').parents('form').get(0) == $form.get(0)
       return @submitWithAIM(data,cb)
-    else
-      # call run method, and pass our submit handler
-      return @run(data.action, data)
-    return true
+
+    # call run method, and pass our submit handler
+    @run(data.action, data)
+    return false
 
   # Submit form with AIM (ajax iframe method)
   #
