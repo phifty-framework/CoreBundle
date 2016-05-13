@@ -177,13 +177,10 @@ USAGE
         }));
       }
       return this.formEl.submit((function(_this) {
-        return function() {
-          var e, ret;
+        return function(e) {
+          e.preventDefault();
           try {
-            ret = _this.submit();
-            if (ret) {
-              return ret;
-            }
+            _this.submit();
           } catch (_error) {
             e = _error;
             if (window.console) {
@@ -488,6 +485,12 @@ USAGE
           return false;
         }
       }
+
+      /*
+       *
+       * doSubmit will retunr jQuery.Promise object
+       * @return {jQuery.Deferred}
+       */
       doSubmit = (function(_this) {
         return function(payload) {
           var errorHandler, formEl, postUrl, successHandler;
@@ -627,7 +630,8 @@ USAGE
         cb = arg1;
       }
       data = $.extend(this.getData(this.form()), extendData);
-      return this.run(data.action, data, options, cb);
+      this.run(data.action, data, options, cb);
+      return false;
     };
 
     return Action;

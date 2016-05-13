@@ -152,19 +152,17 @@ class Action
         type:"hidden"
         name:"__ajax_request"
         value: 1
-    @formEl.submit =>
-      # run Action.submit method()
+    @formEl.submit (e) =>
+      e.preventDefault()
       try
-        # dispatch toAction.submit method
-        ret = @submit()
-        return ret if ret
+        @submit()
       catch e
         console.error("Form submit error",e.message,e) if window.console
+      # always return false to prevent the default behaviour
       return false
 
   form: (f) ->
-    if f
-      @setForm(f)
+    @setForm(f) if f
     return @formEl
 
   log: -> console.log.apply(console, arguments) if window.console and window.console.log and console.log.apply
@@ -403,8 +401,11 @@ class Action
 
 
 
+    ###
+    #
     # doSubmit will retunr jQuery.Promise object
-    # @return {jQuery.Promise}
+    # @return {jQuery.Deferred}
+    ###
     doSubmit = (payload) =>
       # if we have session, then we set the default csrf token
       # an user may override the csrf token from web form
@@ -517,16 +518,15 @@ class Action
   ###
   submitWith: (extendData,arg1,arg2) ->
     options = { }
-
     # arg2 is option
     if typeof arg1 == "object"
       options = arg1
       cb = arg2 if typeof arg2 == "function"
     else if typeof arg1 == "function"
       cb = arg1
-
-    data = $.extend @getData( @form() ), extendData
+    data = $.extend @getData(@form()), extendData
     @run(data.action , data , options , cb)
+    return false
 
 
 Action._globalPlugins = [ ]
@@ -547,7 +547,7 @@ window.submitAction = (f,arg1,arg2) ->
 
 window.runAction = (actionName,args,arg1,arg2) ->
   a = new Action
-  a.run actionName,args,arg1,arg2
+  return a.run actionName,args,arg1,arg2
 
 # Export Action to jQuery.
 window.Action = $.Action = Action
