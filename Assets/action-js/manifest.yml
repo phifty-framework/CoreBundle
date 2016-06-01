@@ -1,15 +1,7 @@
 ---
 collections:
-  - file: [ images ]
-  - css:
-    - action.css
-  - js:
-    - setup.js
-    - action.js
-    - search-action.js
-    - action-growl.js
-    - action-msgbox.js
-    - action-highlight.js
-    - action-bootstrap-highlight.js
-    - action-loader.js
-    watch: 'coffee -w -c *.coffee'
+- css:
+  - action.css
+- js:
+  - setup.js
+  - action.js
