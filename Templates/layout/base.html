@@ -14,17 +14,13 @@ vim:filetype=htmldjango:
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     {% set appname = Kernel.config.get('framework.ApplicationName') %}
-
     {% block head %}
     <title>{% block title %} {{ title|default(appname) }} {% endblock %}</title>
-
     <meta charset="UTF-8" /> 
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="content" content="Content-Type: text/html; Charset: UTF-8; " />
-
-    {{ Web.include_assets({assets: ['jquery-1.8','jquery-ui-1.9','action-js','region-js']}) |raw}}
-
+    {% assets 'jquery-1.8','jquery-ui-1.9','action-js','region-js' %}
     {% endblock %}
 </head>
 <body>
