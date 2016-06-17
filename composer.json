@@ -1,11 +1,18 @@
 {
-    "name": "corneltek/corebundle",
+    "name": "phifty/corebundle",
     "type": "phifty-bundle",
     "description": "core bundle that includes commonly used assets",
     "license": "proprietary",
-    "require": { "corneltek/installers": "dev-master" },
-    "authors": [ { "name": "c9s", "email": "yoanlin93@gmail.com" } ],
-    "autoload": { "psr-4":  { "CoreBundle\\": "" } },
-    "extra": { "branch-alias": { "dev-master": "3.1.x-dev" } },
-    "repositories": [ {"type": "composer", "url": "https://toran.corneltek.com/repo/private/"} ]
+    "require": {
+        "composer/installers": "~1.0.0"
+    },
+    "authors": [
+        { "name": "c9s", "email": "yoanlin93@gmail.com" }
+    ],
+    "autoload": {
+        "psr-4":  { "CoreBundle\\": "" }
+    },
+    "extra": {
+        "branch-alias": { "dev-master": "3.1.x-dev" }
+    }
 }
