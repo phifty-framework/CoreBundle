@@ -1,6 +1,6 @@
 ---
-#  resource:
-#    url: http://underscorejs.org/underscore.js
+resource:
+  url: http://underscorejs.org/underscore-min.js
 collections:
-  - js:
-    - underscore.js
+- js:
+  - underscore-min.js
