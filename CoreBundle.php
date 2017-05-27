@@ -2,9 +2,8 @@
 namespace CoreBundle;
 use Phifty\Bundle;
 use Twig_Function_Function;
-use Phifty\ComposerConfigBridge;
 
-class CoreBundle extends Bundle implements ComposerConfigBridge
+class CoreBundle extends Bundle
 {
     public function assets()
     {
@@ -60,14 +59,4 @@ class CoreBundle extends Bundle implements ComposerConfigBridge
             $this->route( '/_dev/server', 'InfoController:server' );
         }
     }
-
-
-    public function getComposerDependency() {
-        return [
-            "php"                       => ">=5.3.0",
-            "corneltek/phifty-core"    => "dev-master",
-        ];
-    }
-
 }
-
