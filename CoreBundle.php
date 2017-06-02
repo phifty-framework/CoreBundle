@@ -44,7 +44,7 @@ class CoreBundle extends Bundle
         );
     }
 
-    public function init()
+    public function boot()
     {
         // $this->route( '/' , 'Index' );
         // $this->route( '/not-found' , 'NotFound' );
