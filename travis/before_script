@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+set -x
+
+(cd config && ln -s framework{.dev,}.yml)
+(cd config && ln -s database{.dev,}.yml)
+
+cp -r frameworks/phifty/app .
+
+rm -f bootstrap.php && php vendor/bin/phifty bootstrap && php bootstrap.php
+php vendor/bin/maghead use config/database.yml
+php vendor/bin/maghead db create
+php vendor/bin/maghead schema build
+php vendor/bin/maghead sql --rebuild
