@@ -1,6 +1,6 @@
 <?php
 namespace CoreBundle\Controller;
-use Phifty\Controller;
+use Phifty\Routing\Controller;
 class Index extends Controller
 {
     function run()

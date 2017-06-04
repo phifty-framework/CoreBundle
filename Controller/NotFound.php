@@ -1,9 +1,9 @@
 <?php
 namespace CoreBundle\Controller;
 
-use Phifty\Controller;
+use Phifty\Routing\Controller;
 
-class NotFound extends \Phifty\Controller
+class NotFound extends \Phifty\Routing\Controller
 {
 
     function run()

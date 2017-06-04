@@ -1,7 +1,9 @@
 <?php
+
 namespace CoreBundle\Controller;
+
 use Phifty\Pygmentize;
-use Phifty\Controller;
+use Phifty\Routing\Controller;
 use Twig_Function_Function;
 use Twig_Error_Runtime;
 
