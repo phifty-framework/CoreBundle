@@ -7,6 +7,19 @@
         "phifty/phifty": "4.0.x-dev",
         "composer/installers": "^1"
     },
+    "require-dev": {
+        "corneltek/cliframework": "@dev",
+        "corneltek/actionkit": "@dev",
+        "corneltek/assetkit": "@dev",
+        "corneltek/codegen": "@dev",
+        "corneltek/kendo": "@dev",
+        "corneltek/pux": "@dev",
+        "phpsgi/phpsgi": "@dev",
+        "phpsgi/funk": "@dev",
+        "universal/universal": "@dev",
+        "maghead/maghead": "@dev",
+        "maghead/magsql": "@dev"
+    },
     "authors": [
         { "name": "c9s", "email": "yoanlin93@gmail.com" }
     ],
