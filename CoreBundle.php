@@ -31,8 +31,6 @@ class CoreBundle extends Bundle
             'jquery-scrollto',
             'jgrowl',
             'bootstrap-daterangepicker',
-            'formkit',
-            'fivekit',
             'locale-js',
             'minilocale-js',
             'webtoolkit',
@@ -48,7 +46,6 @@ class CoreBundle extends Bundle
     {
         // $this->route( '/' , 'Index' );
         // $this->route( '/not-found' , 'NotFound' );
-        $this->route('/=/current_user/csrf', 'CsrfController');
 
         // register twig function for exception
         if ($this->kernel->isDev) {
