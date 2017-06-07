@@ -202,24 +202,8 @@ vim:sw=2:ts=2:sts=2:et:
       return bar;
     };
 
-    RegionNode.prototype.getLoadingIndicator = function() {
-      var $pyramid, $stage;
-      if (this.indicator) {
-        return this.indicator;
-      }
-      $stage = $('<div/>').addClass('pyramid-stage');
-      $pyramid = $('<div/>').addClass('pyramid');
-      $pyramid.append($('<div class="square side1"></div>'));
-      $pyramid.append($('<div class="triangle side2"></div>'));
-      $pyramid.append($('<div class="triangle side3"></div>'));
-      $pyramid.append($('<div class="triangle side4"></div>'));
-      $pyramid.append($('<div class="triangle side5"></div>'));
-      $pyramid.appendTo($stage);
-      return this.indicator = $stage;
-    };
-
     RegionNode.prototype._request = function(path, args, callback) {
-      var $el, $stage, offset, onError, onSuccess, that;
+      var $el, offset, onError, onSuccess, that;
       that = this;
       $(Region).trigger('region.waiting', [this]);
       $el = this.getEl();
@@ -229,17 +213,8 @@ vim:sw=2:ts=2:sts=2:et:
       }
       $el.addClass('region-loading');
       offset = $el.offset();
-      $stage = this.getLoadingIndicator();
-      $el.append($stage);
       onError = function(e) {
-        var d;
         $el.removeClass('region-loading');
-        if (Region.opts.statusbar) {
-          d = $('<div/>').addClass('region-message region-error');
-          d.html("Path: " + path + " " + (e.statusText || e.responseText));
-          that.getStatusbarEl().show().html(d);
-        }
-        that.el.html(e.statusText);
         if (window.console) {
           return console.error(path, args, e.statusText || e.responseText);
         } else {
@@ -247,7 +222,7 @@ vim:sw=2:ts=2:sts=2:et:
         }
       };
       onSuccess = function(data, textStatus, jqXHR) {
-        var effectClass, html, region;
+        var html;
         if (jqXHR.responseJSON) {
           if (data.login_required) {
             if (data.login_modal_url && typeof ModalManager !== "undefined") {
@@ -274,40 +249,12 @@ vim:sw=2:ts=2:sts=2:et:
         }
         html = data;
         $(Region).trigger('region.finish', [this]);
-        $stage.remove();
         $el.removeClass('region-loading');
-        if (that.opts.noEffect) {
-          that.el.hide().html(html).show(100, (function() {
-            if (callback) {
-              return callback(html);
-            }
-          }));
-          return $(Region).trigger('region.load', [that.el]);
-        } else {
-          region = that.el;
-          region.html(html);
-          $(Region).trigger('region.load', [that.el]);
-          if (that.opts.noEffect) {
-            return;
-          }
-          effectClass = region.data('effectClass');
-          if (effectClass) {
-            region.removeClass('animated flipInY');
-            return setTimeout((function() {
-              return that.el.addClass('animated flipInY').show(100, function() {
-                if (callback) {
-                  return callback(html);
-                }
-              });
-            }), 10);
-          } else {
-            return region.fadeIn('fast', function() {
-              if (callback) {
-                return callback(html);
-              }
-            });
-          }
+        that.el.html(html);
+        if (callback) {
+          callback(html);
         }
+        return $(Region).trigger('region.load', [that.el]);
       };
       if (Region.opts.gateway) {
         return $.ajax({

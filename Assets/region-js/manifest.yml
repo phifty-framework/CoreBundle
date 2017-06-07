@@ -1,4 +1,5 @@
 ---
 collections:
-  - js:
-    - region.js
+- js:
+  - region.js
+  watch: coffee -wc *.coffee

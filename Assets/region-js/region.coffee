@@ -167,18 +167,6 @@ class RegionNode
     return bar
 
 
-  getLoadingIndicator: () ->
-    return @indicator if @indicator
-    $stage = $('<div/>').addClass('pyramid-stage')
-    $pyramid = $('<div/>').addClass('pyramid')
-    $pyramid.append($('<div class="square side1"></div>'))
-    $pyramid.append($('<div class="triangle side2"></div>'))
-    $pyramid.append($('<div class="triangle side3"></div>'))
-    $pyramid.append($('<div class="triangle side4"></div>'))
-    $pyramid.append($('<div class="triangle side5"></div>'))
-    $pyramid.appendTo($stage)
-    return @indicator = $stage
-
   _request: (path, args, callback ) ->
     that = this
     $(Region).trigger('region.waiting', [this])
@@ -194,19 +182,8 @@ class RegionNode
     $el.addClass('region-loading')
     offset = $el.offset()
 
-    $stage = @getLoadingIndicator()
-    $el.append($stage)
-    # $stage.css({ position: 'absolute', top: '40%', left: '44%', display: 'block' })
-    # attach to the size of region element
-
     onError = (e) ->
       $el.removeClass('region-loading')
-
-      if Region.opts.statusbar
-        d = $('<div/>').addClass('region-message region-error')
-        d.html( "Path: " + path + " " + ( e.statusText || e.responseText ) )
-        that.getStatusbarEl().show().html( d )
-      that.el.html( e.statusText )
       if window.console
         console.error( path , args ,  e.statusText || e.responseText )
       else
@@ -234,33 +211,11 @@ class RegionNode
       # console.log(jqXHR.getAllResponseHeaders())
       $(Region).trigger('region.finish', [this])
 
-      $stage.remove()
-
       $el.removeClass('region-loading')
 
-      if that.opts.noEffect
-        that.el.hide().html(html).show 100, (-> callback(html) if callback)
-        $(Region).trigger('region.load', [ that.el ])
-      else
-        # TODO: here the animation stuff should be a event handler or a callback.
-        region = that.el
-        region.html(html)
-        $(Region).trigger('region.load', [that.el])
-        return if that.opts.noEffect
-
-        effectClass = region.data('effectClass')
-
-        # if the effect class is defined, we should use the effect class name
-        if effectClass
-          # remove the animated class name, so that we can repeat the animation
-          region.removeClass('animated flipInY')
-          setTimeout (->
-            that.el.addClass('animated flipInY').show 100, ->
-              callback(html) if callback
-          ), 10
-        else
-          region.fadeIn 'fast', () ->
-            callback(html) if callback
+      that.el.html(html)
+      callback(html) if callback
+      $(Region).trigger('region.load', [ that.el ])
 
     if Region.opts.gateway
       $.ajax
