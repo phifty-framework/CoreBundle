@@ -19,11 +19,6 @@ vim:sw=2:ts=2:sts=2:et:
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-
-
-# TODO: refactor the statusbar out, it should be a plugin or triggered by an event.
-
-
 isIE = navigator.appName == 'Microsoft Internet Explorer'
 if isIE
     jQuery.fx.off = true
@@ -33,7 +28,6 @@ Region =
   opts:
     method: 'post'
     gateway: null
-    statusbar: true
     effect: "fade"  # current only for closing.
   config: (opts) ->
     @opts = $.extend( @opts, opts)
@@ -150,23 +144,6 @@ class RegionNode
     if( @opts.history )
       @_history = new RegionHistory()
 
-  createStatusbar: () ->
-    return $('<div/>')
-      .addClass('region-statusbar')
-      .attr('id','region-statusbar')
-
-  getStatusbarEl: () ->
-    return RegionNode.statusbar if RegionNode.statusbar
-
-    bar = $('#region-statusbar')
-    return bar if bar.get(0)
-
-    bar = @createStatusbar()
-    $(document.body).append( bar )
-    RegionNode.statusbar = bar
-    return bar
-
-
   _request: (path, args, callback ) ->
     that = this
     $(Region).trigger('region.waiting', [this])
@@ -270,7 +247,7 @@ class RegionNode
   load: (path,args,callback) ->
     path ||= @path
     args ||= @args or {}
-    @replace(path,args, callback )
+    @replace(path,args, callback)
 
   replace: (path,args,callback) ->
     @saveHistory()
@@ -439,7 +416,7 @@ Region.before = (el, path, args, triggerElement) ->
 Region.load = (el,path,arg1,arg2) ->
   callback
   args = {  }
-  if typeof arg1 is "object"
+  if typeof arg1 is "object" or typeof arg1 is "string"
     args = arg1
     if typeof arg2 is "function"
       callback = arg2

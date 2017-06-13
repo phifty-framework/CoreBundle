@@ -34,7 +34,6 @@ vim:sw=2:ts=2:sts=2:et:
     opts: {
       method: 'post',
       gateway: null,
-      statusbar: true,
       effect: "fade"
     },
     config: function(opts) {
@@ -181,25 +180,6 @@ vim:sw=2:ts=2:sts=2:et:
       if (this.opts.history) {
         return this._history = new RegionHistory();
       }
-    };
-
-    RegionNode.prototype.createStatusbar = function() {
-      return $('<div/>').addClass('region-statusbar').attr('id', 'region-statusbar');
-    };
-
-    RegionNode.prototype.getStatusbarEl = function() {
-      var bar;
-      if (RegionNode.statusbar) {
-        return RegionNode.statusbar;
-      }
-      bar = $('#region-statusbar');
-      if (bar.get(0)) {
-        return bar;
-      }
-      bar = this.createStatusbar();
-      $(document.body).append(bar);
-      RegionNode.statusbar = bar;
-      return bar;
     };
 
     RegionNode.prototype._request = function(path, args, callback) {
@@ -565,7 +545,7 @@ vim:sw=2:ts=2:sts=2:et:
     callback;
     var args, callback, rn;
     args = {};
-    if (typeof arg1 === "object") {
+    if (typeof arg1 === "object" || typeof arg1 === "string") {
       args = arg1;
       if (typeof arg2 === "function") {
         callback = arg2;
