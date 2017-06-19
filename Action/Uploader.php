@@ -1,7 +1,12 @@
 <?php
 namespace CoreBundle\Action;
+
+
 use Exception;
 use Phifty\FileUtils;
+
+use ActionKit\Storage\FileRenameMethods;
+
 
 // Upload Header is like:
 //
@@ -133,10 +138,10 @@ class Uploader
         return false;
     }
 
-    public function move( $newFileName = null )
+    public function move($newFileName = null)
     {
-        if ($this->supportSendAsBinary() ) {
-            if ( ! isset($_FILES[$this->field]['name'] ) ) {
+        if ($this->supportSendAsBinary()) {
+            if ( ! isset($_FILES[$this->field]['name'] )) {
                 throw new Exception( "File field '{$this->field}': name is empty");
             }
 
@@ -147,13 +152,16 @@ class Uploader
             /* process with $_FILES */
             // $_FILES['upload']['tmp_name'];
             $filename = $newFileName ? $newFileName : $_FILES[$this->field]['name'];
+            $tmpName = $_FILES['upload']['tmp_name'];
             $path = $this->uploadDir . DIRECTORY_SEPARATOR . $filename;
-            $path = FileUtils::filename_increase($path);
-            if ( move_uploaded_file( $_FILES['upload']['tmp_name'] , $path ) === false ) {
+            $path = FileRenameMethods::md5ize($path, $tmpName);
+            if (move_uploaded_file($tmpName, $path ) === false) {
                 return false;
             }
             return $path;
+
         } else {
+
             if ( ! $this->content ) {
                 throw new Exception('No file content to upload');
             }
