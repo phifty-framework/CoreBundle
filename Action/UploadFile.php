@@ -1,6 +1,6 @@
 <?php
 
-class UploadFileAction extends \ActionKit\Action 
+class UploadFileAction extends \WebAction\Action 
 {
     var $filedir = "files/";
 

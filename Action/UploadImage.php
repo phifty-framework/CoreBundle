@@ -4,7 +4,7 @@ namespace CoreBundle\Action;
 use SimpleImage;
 
 # MOVE THIS INTO FRAMEWORK
-class UploadImageAction extends \ActionKit\Action 
+class UploadImageAction extends \WebAction\Action 
 {
     var $base_path;
     var $image_dir = "images/";

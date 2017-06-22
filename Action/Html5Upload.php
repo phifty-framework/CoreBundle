@@ -1,7 +1,7 @@
 <?php
 namespace CoreBundle\Action;
 
-use ActionKit\Action;
+use WebAction\Action;
 
 class Html5Upload extends Action
 {
