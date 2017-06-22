@@ -9,7 +9,7 @@
     },
     "require-dev": {
         "corneltek/cliframework": "@dev",
-        "corneltek/actionkit": "@dev",
+        "c9s/webaction": "@dev",
         "corneltek/assetkit": "@dev",
         "corneltek/codegen": "@dev",
         "corneltek/kendo": "@dev",
