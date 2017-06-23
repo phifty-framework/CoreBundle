@@ -4,7 +4,7 @@ namespace CoreBundle\Action;
 use Exception;
 use Phifty\FileUtils;
 
-use ActionKit\Storage\FileRenameMethods;
+use WebAction\Storage\FileRenameMethods;
 
 // The Upload Header is like:
 //
