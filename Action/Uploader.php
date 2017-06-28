@@ -5,6 +5,7 @@ use Exception;
 use Phifty\FileUtils;
 
 use WebAction\Storage\FileRenameMethods;
+use WebAction\Storage\FilePath;
 
 // The Upload Header is like:
 //
@@ -153,12 +154,27 @@ class Uploader
             // TODO: prepend date string
             $filename = $newFileName ? $newFileName : $_FILES[$this->field]['name'];
             $tmpName = $_FILES['upload']['tmp_name'];
-            $path = $this->uploadDir . DIRECTORY_SEPARATOR . $filename;
-            $path = FileRenameMethods::md5ize($path, $tmpName);
-            if (move_uploaded_file($tmpName, $path) === false) {
+
+            $targetPath = $this->uploadDir . DIRECTORY_SEPARATOR . $filename;
+            $targetPath = new FilePath(FileRenameMethods::md5ize($targetPath, $tmpName));
+
+            $cnt = 2;
+            if ($targetPath->exists()) {
+                $testPath = clone $targetPath;
+                while ($testPath->exists()) {
+                    $testPath = $targetPath->renameAs("{$targetPath->filename}_{$cnt}");
+                    $cnt++;
+                }
+                $targetPath = $testPath;
+            }
+            $targetPath = $targetPath->__toString();
+
+            if (move_uploaded_file($tmpName, $targetPath) === false) {
                 return false;
             }
-            return $path;
+
+            return $targetPath;
+
         } else {
             if (! $this->content) {
                 throw new Exception('No file content to upload');
