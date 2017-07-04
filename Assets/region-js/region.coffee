@@ -116,6 +116,8 @@ class RegionNode
     return this
 
   writeData: (path,args) ->
+    @el.attr('data-region',path)
+    # @el.attr('data-args', jQuery.param(args))
     @el.data('path',path)
     @el.data('args',args)
 
@@ -356,6 +358,12 @@ Region.of = (el) ->
   regEl = $(el).parents('.__region').get(0)
   return if not regEl
   return $(regEl).asRegion()
+
+Region.prepend = (el,path,args) ->
+  rn = new RegionNode(path,args)
+  rn.refresh()
+  $(el).prepend( rn.getEl() )
+  return if rn.getEl() then true else false
 
 Region.append = (el,path,args) ->
   rn = new RegionNode(path,args)

@@ -140,6 +140,7 @@ vim:sw=2:ts=2:sts=2:et:
     };
 
     RegionNode.prototype.writeData = function(path, args) {
+      this.el.attr('data-region', path);
       this.el.data('path', path);
       return this.el.data('args', args);
     };
@@ -472,6 +473,18 @@ vim:sw=2:ts=2:sts=2:et:
       return;
     }
     return $(regEl).asRegion();
+  };
+
+  Region.prepend = function(el, path, args) {
+    var rn;
+    rn = new RegionNode(path, args);
+    rn.refresh();
+    $(el).prepend(rn.getEl());
+    if (rn.getEl()) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   Region.append = function(el, path, args) {
