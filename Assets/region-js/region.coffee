@@ -444,7 +444,7 @@ jQuery.fn.asRegion = (opts) ->
   r = $(this).data('regionObj')
   return r if r
 
-  r = new RegionNode( $(this), null, opts)
+  r = new RegionNode($(this), null, opts)
   $(this).data('regionObj', r)
   return r
 
