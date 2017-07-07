@@ -105,7 +105,7 @@ class RegionNode
 
   init: (el) ->
     el.addClass( '__region' )
-      .data('region',this)
+      .data('regionObj',this)
     return el
 
   createRegionDiv: () -> this.initFromElement( $('<div/>') )
@@ -441,11 +441,11 @@ Region.replace = (el,path,arg1,arg2) ->
     return rn
 
 jQuery.fn.asRegion = (opts) ->
-  r = $(this).data('region')
+  r = $(this).data('regionObj')
   return r if r
 
   r = new RegionNode( $(this), null, opts)
-  $(this).data('region',r)
+  $(this).data('regionObj', r)
   return r
 
 

@@ -126,7 +126,7 @@ vim:sw=2:ts=2:sts=2:et:
     };
 
     RegionNode.prototype.init = function(el) {
-      el.addClass('__region').data('region', this);
+      el.addClass('__region').data('regionObj', this);
       return el;
     };
 
@@ -580,12 +580,12 @@ vim:sw=2:ts=2:sts=2:et:
 
   jQuery.fn.asRegion = function(opts) {
     var r;
-    r = $(this).data('region');
+    r = $(this).data('regionObj');
     if (r) {
       return r;
     }
     r = new RegionNode($(this), null, opts);
-    $(this).data('region', r);
+    $(this).data('regionObj', r);
     return r;
   };
 
