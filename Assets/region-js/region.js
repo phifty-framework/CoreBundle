@@ -488,15 +488,11 @@ vim:sw=2:ts=2:sts=2:et:
   };
 
   Region.append = function(el, path, args) {
-    var rn;
+    var defer, rn;
     rn = new RegionNode(path, args);
-    rn.refresh();
+    defer = rn.refresh();
     $(el).append(rn.getEl());
-    if (rn.getEl()) {
-      return true;
-    } else {
-      return false;
-    }
+    return defer;
   };
 
 

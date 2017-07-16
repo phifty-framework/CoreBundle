@@ -197,7 +197,7 @@ class RegionNode
       $(Region).trigger('region.load', [ that.el ])
 
     if Region.opts.gateway
-      $.ajax
+      return $.ajax
         url: Region.opts.gateway
         type: Region.opts.method
         # dataType: 'html'
@@ -210,7 +210,7 @@ class RegionNode
           html: 'text/html'
           json: 'application/json'
     else
-      $.ajax
+      return $.ajax
         url: path
         data: args
         # dataType: 'html'
@@ -225,7 +225,7 @@ class RegionNode
 
   getEl: () -> @el
 
-  refresh: (callback) -> @_request( @path , @args , callback )
+  refresh: (callback) -> return @_request( @path , @args , callback )
 
   refreshWith: (args, callback) ->
     newArgs = $.extend({} , @args, args)
@@ -367,9 +367,9 @@ Region.prepend = (el,path,args) ->
 
 Region.append = (el,path,args) ->
   rn = new RegionNode(path,args)
-  rn.refresh()
-  $(el).append( rn.getEl() )
-  return if rn.getEl() then true else false
+  defer = rn.refresh()
+  $(el).append(rn.getEl())
+  return defer
 
 ###
 * Insert a region after an element
